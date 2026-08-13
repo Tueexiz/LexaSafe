@@ -1,0 +1,296 @@
+/* ==========================================================================
+   LEXASAFE - RESPONSIVE DESIGN ABSOLU (ZÉRO DÉBORDEMENT & ADAPTATIF)
+   Breakpoints : Large Desktop (>1200px), Tablet (768px-1199px), Mobile (<768px)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. LARGE TABLET & LAPTOP (max-width: 1199px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1199px) {
+  .header-capsule {
+    width: min(960px, calc(100vw - 32px));
+    gap: 1rem;
+    padding-inline: 16px 10px;
+  }
+
+  .nav-menu {
+    gap: 0.15rem;
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+    padding: 6px 10px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .workflow-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. TABLET (max-width: 991px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 991px) {
+  .workflow-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 580px;
+  }
+
+  .calc-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .creators-row {
+    grid-template-columns: 1fr;
+    max-width: 620px;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+
+  .hero-mockup-frame {
+    transform: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. MOBILE (max-width: 767px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .section {
+    padding-block: 4.5rem;
+  }
+
+  /* Header Capsule Mobile */
+  .site-header {
+    top: 10px;
+  }
+
+  .header-capsule {
+    height: 58px;
+    padding: 6px 8px 6px 14px;
+    border-radius: 40px;
+    width: calc(100vw - 20px);
+  }
+
+  .brand-logo-img {
+    height: 36px;
+    max-height: 36px;
+  }
+
+  .nav-menu {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .btn-pill-cta {
+    padding: 8px 14px;
+    font-size: 0.825rem;
+  }
+
+  .btn-portal-secondary {
+    display: none;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding-top: 100px;
+    padding-bottom: 50px;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+    line-height: 1.12;
+  }
+
+  .rotator-keyword {
+    min-width: 170px;
+    font-size: 0.95rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.02rem;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+  }
+
+  .trust-badges {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trust-pill {
+    justify-content: center;
+  }
+
+  /* Mockup App */
+  .mockup-body-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Bento & Features */
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Calculator */
+  .calculator-card {
+    padding: 1.5rem;
+  }
+
+  .calc-results-box {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .calc-savings-strip {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .calc-fine-number {
+    font-size: 2.2rem;
+  }
+
+  /* Stories & Case Studies */
+  .story-card-wrapper {
+    padding: 1.75rem;
+  }
+
+  .story-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Creators */
+  .creator-compact-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.75rem;
+  }
+
+  .creator-header-name {
+    justify-content: center;
+  }
+
+  /* Pricing */
+  .pricing-card {
+    padding: 2rem 1.5rem;
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. SMALL MOBILE (max-width: 374px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 374px) {
+  .hero-title {
+    font-size: 1.95rem;
+  }
+
+  .btn-pill-cta span {
+    font-size: 0.75rem;
+  }
+
+  .calc-fine-number {
+    font-size: 1.85rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. DASHBOARD & CONSOLE RESPONSIVE (ZERO OVERLAP & PADDING PARFAIT)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .dash-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10000;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .dash-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .dash-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .dash-topbar {
+    padding-inline: 1.25rem;
+    height: auto;
+    min-height: 68px;
+    padding-block: 0.75rem;
+  }
+
+  .dash-content {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .dash-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .hero-metrics-strip {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dash-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .extracted-data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .topbar-actions {
+    flex-wrap: wrap;
+  }
+}

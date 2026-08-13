@@ -1,0 +1,33 @@
+# DEPRECATED — Utiliser infra/docker-compose.yml pour la production SecNumCloud
+# Ce fichier est conservé pour compatibilité dev rapide
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: lexasafe_db
+      POSTGRES_USER: lexa_user
+      POSTGRES_PASSWORD: secret_change_me_in_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://lexa_user:secret_change_me_in_prod@db:5432/lexasafe_db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis

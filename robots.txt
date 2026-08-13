@@ -1,0 +1,31 @@
+# ==============================================================================
+#                 _       _______  __    _     ____  ___   ______ _____
+#                | |     | ____\ \/ /   / \   / ___|/ _ \ |  ____| ____|
+#                | |     |  _|  \  /   / _ \  \___ \ | | || |_  |  _|  
+#                | |___  | |___ /  \  / ___ \  ___) | |_| ||  _| | |___ 
+#                |_____| |_____/_/\_\/_/   \_\|____/ \___/ |_|   |_____|
+#
+#        --- PASSERELLE SOUVERAINE FRANCAISE DE REQUISITIONS JUDICIAIRES ---
+#          Protection Anti-Spoofing • e-Evidence • Zero Fausse Requisition
+#           Hébergement 100% France chez OVHcloud (SecNumCloud ANSSI)
+#                     Conçu par 0xzEus & Tueexiz - 100% Souverain
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /demo.html
+Allow: /createurs.html
+Allow: /404.html
+
+# Zones Sécurisées & Espaces Restreints
+Disallow: /dashboard.html
+Disallow: /login.html
+Disallow: /admin.html
+Disallow: /entreprise.html
+Disallow: /api/
+Disallow: /vault/
+Disallow: /auth/
+Disallow: /internal/
+
+Sitemap: https://lexasafe.fr/sitemap.xml

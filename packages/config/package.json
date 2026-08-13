@@ -1,0 +1,13 @@
+{
+  "name": "@lexasafe/config",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./tailwind": "./tailwind.preset.ts",
+    "./typescript/base": "./tsconfig.base.json",
+    "./typescript/nextjs": "./tsconfig.nextjs.json"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

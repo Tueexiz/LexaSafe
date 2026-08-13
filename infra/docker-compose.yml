@@ -1,0 +1,195 @@
+# ==============================================================================
+# LEXASAFE FRANCE - DOCKER COMPOSE SOUVERAIN (OVHCLOUD SECNUMCLOUD)
+# Nginx • 3x Next.js • FastAPI • PostgreSQL 16 RLS • Redis • ClamAV
+# ==============================================================================
+
+services:
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: lexasafe_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./secrets/ssl:/etc/ssl:ro
+    depends_on:
+      web:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+      dashboard:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    container_name: lexasafe_web
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.lexasafe.fr
+      - NEXT_PUBLIC_AUTH_URL=https://auth.lexasafe.fr
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  auth:
+    build:
+      context: ..
+      dockerfile: apps/auth/Dockerfile
+    container_name: lexasafe_auth
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.lexasafe.fr
+      - NEXT_PUBLIC_APP_URL=https://app.lexasafe.fr
+      - NEXT_PUBLIC_WEB_URL=https://lexasafe.fr
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: apps/dashboard/Dockerfile
+    container_name: lexasafe_dashboard
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.lexasafe.fr
+      - NEXT_PUBLIC_AUTH_URL=https://auth.lexasafe.fr
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3002"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: lexasafe_api
+    restart: always
+    environment:
+      - APP_ENV=production
+      - DATABASE_URL=postgresql://lexa_user:${POSTGRES_PASSWORD}@db:5432/lexasafe_db
+      - REDIS_URL=redis://redis:6379/0
+      - JWE_SECRET_KEY_FILE=/run/secrets/jwe_secret
+      - APP_MASTER_KEY_FILE=/run/secrets/master_key
+      - DB_ENCRYPTION_KEY_FILE=/run/secrets/db_encryption_key
+      - SMTP_HOST=${SMTP_HOST:-ssl0.ovh.net}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM:-noreply@lexasafe.fr}
+      - CLAMAV_HOST=clamav
+      - CORS_ORIGINS=https://lexasafe.fr,https://auth.lexasafe.fr,https://app.lexasafe.fr
+    secrets:
+      - jwe_secret
+      - master_key
+      - db_encryption_key
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clamav:
+        condition: service_started
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  db:
+    image: postgres:16-alpine
+    container_name: lexasafe_db
+    restart: always
+    environment:
+      POSTGRES_DB: lexasafe_db
+      POSTGRES_USER: lexa_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret_change_me_in_prod}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../sql/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lexa_user -d lexasafe_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: lexasafe_redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    networks:
+      - sovereign_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  clamav:
+    image: clamav/clamav:1.4
+    container_name: lexasafe_clamav
+    restart: always
+    networks:
+      - sovereign_net
+
+  backup:
+    image: alpine:3.20
+    container_name: lexasafe_backup
+    restart: "no"
+    profiles: ["backup"]
+    volumes:
+      - ../scripts:/scripts:ro
+      - pgdata:/pgdata:ro
+      - backupdata:/backups
+    entrypoint: ["/bin/sh", "/scripts/encrypted_backup.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+secrets:
+  jwe_secret:
+    file: ./secrets/jwe_secret.txt
+  master_key:
+    file: ./secrets/master_key.txt
+  db_encryption_key:
+    file: ./secrets/db_encryption_key.txt
+
+networks:
+  sovereign_net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:
+  backupdata:

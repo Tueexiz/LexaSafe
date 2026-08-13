@@ -1,0 +1,17 @@
+node_modules/
+.next/
+dist/
+.turbo/
+*.log
+.env
+.env.local
+.env.*.local
+__pycache__/
+*.pyc
+.venv/
+infra/secrets/
+*.pem
+*.key
+
+backend/data/opj_registration_requests/*.json
+

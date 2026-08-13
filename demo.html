@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faire une Demande | LexaSafe France</title>
+  <meta name="description" content="Faites une demande d'accès ou de démonstration pour votre entreprise à la passerelle souveraine de réquisitions judiciaires LexaSafe.">
+
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+
+  <link rel="stylesheet" href="css/index.css?v=20260813_v4">
+  <link rel="stylesheet" href="css/components.css?v=20260813_v4">
+  <link rel="stylesheet" href="css/responsive.css?v=20260813_v4">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body style="background-color:var(--bg-subtle);">
+
+  <!-- FOND GLOBAL HIGH-TECH & SPOTLIGHT DYNAMIQUE -->
+  <div class="global-ambient-bg" aria-hidden="true">
+    <div class="global-grid-pattern"></div>
+    <div class="global-spotlight" id="global-spotlight"></div>
+  </div>
+
+  <!-- NAVIGATION HEADER EN CAPSULE FLOTTANTE -->
+  <header class="site-header" id="site-header">
+    <div class="header-capsule">
+      <a href="index.html" class="brand-logo" aria-label="LexaSafe Accueil">
+        <img src="assets/logo.png" alt="LexaSafe" class="brand-logo-img">
+      </a>
+
+      <div class="nav-actions">
+        <a href="index.html" class="btn-portal-secondary">
+          <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+          <span>Retour à l'Accueil</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main style="padding-top:140px; padding-bottom:80px; position:relative; z-index:1;">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll" style="margin-bottom:2.5rem;">
+        <div class="badge-sovereign" style="margin-bottom:1.25rem;">
+          <div class="flag-fr"><span></span><span></span><span></span></div>
+          <span>Entreprises &amp; Équipes Juridiques</span>
+        </div>
+        <h1 style="font-size:clamp(2.2rem, 4vw, 3.4rem); margin-bottom:0.75rem; color:var(--blue-navy);">
+          Faire une <span style="color: #1d4ed8;">Demande d'Accès</span>
+        </h1>
+        <p class="section-desc">
+          Raccordez votre entreprise à la passerelle souveraine LexaSafe. Réponse sous 24h ouvrées.
+        </p>
+      </div>
+
+      <!-- FORMULAIRE ENTREPRISE -->
+      <div style="max-width:680px; margin-inline:auto;">
+        
+        <div class="glass-card animate-on-scroll" style="padding:2.75rem; background:#ffffff; box-shadow:0 12px 40px rgba(10,25,47,0.08);">
+          
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1.75rem; border-bottom:1px solid var(--border-subtle); padding-bottom:1.25rem;">
+            <div class="feature-icon-box" style="margin-bottom:0; width:44px; height:44px; background:#eff6ff; color:#1d4ed8;">
+              <i data-lucide="building-2" style="width:22px;height:22px;"></i>
+            </div>
+            <div>
+              <h2 style="font-size:1.3rem; color:var(--blue-navy); margin:0;">Formulaire de Raccordement Entreprise</h2>
+              <div style="font-size:0.825rem; color:var(--text-muted); margin-top:0.2rem;">Protection Anti-Amende 2% &amp; Automatisation des Réquisitions</div>
+            </div>
+          </div>
+
+          <form id="request-form">
+            
+            <div class="form-group">
+              <label class="form-label" for="company-name">Nom de l'Entreprise / Plateforme</label>
+              <input type="text" id="company-name" class="form-input" placeholder="Ex. PayTech France / SAS CloudHost" required>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="form-group">
+                <label class="form-label" for="siren">Numéro SIREN / SIRET</label>
+                <input type="text" id="siren" class="form-input" placeholder="9 chiffres" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="volume">Volume estimé / an</label>
+                <select id="volume" class="form-select">
+                  <option value="1">Moins de 50 réquisitions / an</option>
+                  <option value="2">50 à 300 réquisitions / an</option>
+                  <option value="3">Plus de 300 / an (Grand Compte / Telco)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact-email">Email Professionnel (DPO / Juridique / Dirigeant)</label>
+              <input type="email" id="contact-email" class="form-input" placeholder="dpo@entreprise.fr" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact-phone">Numéro de Téléphone Professionnel</label>
+              <input type="tel" id="contact-phone" class="form-input" placeholder="+33 6 12 34 56 78" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="notes">Besoins ou Remarques (Optionnel)</label>
+              <textarea id="notes" class="form-textarea" rows="3" placeholder="Précisez votre secteur, intégration API ou questions particulières..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-cta-rouge" style="width:100%; padding:0.95rem; font-size:1.05rem; margin-top:0.75rem; border-radius:var(--radius-pill);">
+              <i data-lucide="send"></i>
+              <span>Envoyer ma Demande</span>
+            </button>
+          </form>
+
+          <div style="margin-top:1.75rem; text-align:center; font-size:0.825rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:0.35rem; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.4rem; font-weight:600; color:var(--blue-navy);">
+              <i data-lucide="shield-check" style="width:16px;height:16px;color:#059669;"></i>
+              <span>100% Français • Hébergé chez OVHcloud • Conforme Loi e-Evidence</span>
+            </div>
+            <div style="font-size:0.775rem; color:var(--text-muted);">
+              Architecture Zéro Connaissance (E2EE) : nous ne savons même pas ce qui transite entre vous et la police.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Accès discret OPJ -->
+        <div style="margin-top:1.75rem; text-align:center; font-size:0.85rem; color:var(--text-muted);">
+          <span>Vous êtes un Officier de Police Judiciaire (OPJ) ou Magistrat ?</span>
+          <a href="login.html" style="color:var(--blue-primary); text-decoration:underline; font-weight:700; margin-left:0.35rem;">
+            Accéder à l'espace de connexion sécurisé →
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" style="padding-top:2.5rem;">
+    <div class="container" style="text-align:center; font-size:0.875rem; color:var(--text-muted);">
+      © 2026 LexaSafe France. Passerelle Souveraine de Réquisitions Judiciaires.
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) window.lucide.createIcons();
+
+      const form = document.getElementById('request-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          alert('Merci pour votre demande. Un responsable LexaSafe prendra contact avec vous dans les 24h ouvrées.');
+          form.reset();
+        });
+      }
+    });
+  </script>
+  <script src="js/app.js?v=20260813_v7"></script>
+</body>
+</html>

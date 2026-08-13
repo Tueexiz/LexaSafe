@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LexaSafe | Passerelle Souveraine de Réquisitions Judiciaires</title>
+  <meta name="description" content="Standard souverain français de traitement des réquisitions judiciaires. Bloquez les faux policiers, évitez les amendes de 2% du CA et respectez les délais d'urgence de la loi e-Evidence.">
+  <meta name="author" content="0xzEus &amp; Tueexiz">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LexaSafe | Passerelle Souveraine de Réquisitions Judiciaires">
+  <meta property="og:description" content="100% Français, multi-audité et ultra-sécurisé. Protégez votre entreprise et automatisez vos échanges légaux.">
+  <meta property="og:image" content="assets/logo.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/index.css?v=20260813_v4">
+  <link rel="stylesheet" href="css/components.css?v=20260813_v4">
+  <link rel="stylesheet" href="css/responsive.css?v=20260813_v4">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- FOND GLOBAL HIGH-TECH & SPOTLIGHT DYNAMIQUE -->
+  <div class="global-ambient-bg" aria-hidden="true">
+    <div class="global-grid-pattern"></div>
+    <div class="global-spotlight" id="global-spotlight"></div>
+  </div>
+
+  <!-- NAVIGATION HEADER EN CAPSULE FLOTTANTE (STYLE UMANO STUDIO) -->
+  <header class="site-header" id="site-header">
+    <div class="header-capsule">
+      <div class="capsule-progress-bar" id="capsule-progress-bar"></div>
+      <a href="index.html" class="brand-logo" aria-label="LexaSafe Accueil">
+        <img src="assets/logo.png" alt="LexaSafe" class="brand-logo-img">
+      </a>
+
+      <nav class="nav-menu" aria-label="Navigation principale">
+        <a href="#calculator" class="nav-link">Simulateur</a>
+        <a href="#tarifs" class="nav-link">Tarifs</a>
+        <a href="#creators" class="nav-link">L'Équipe</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="demo.html" class="btn-cta-rouge" data-magnetic>
+          <span>Faire une Demande</span>
+          <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
+        </a>
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Ouvrir le menu">
+          <i data-lucide="menu" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MENU MOBILE PLEIN ÉCRAN (ANIMÉ UMANO STYLE) -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-header">
+      <img src="assets/logo.png" alt="LexaSafe" style="height:36px; width:auto; filter:brightness(0) invert(1);">
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer le menu">
+        <i data-lucide="x" style="width:28px;height:28px;"></i>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="#workflow" class="mobile-nav-link">Plateforme</a>
+      <a href="#avantages" class="mobile-nav-link">Sécurité &amp; Souveraineté</a>
+      <a href="#dangers" class="mobile-nav-link">Risques Évités</a>
+      <a href="#calculator" class="mobile-nav-link">Simulateur de Gain</a>
+      <a href="#tarifs" class="mobile-nav-link">Tarifs &amp; Déploiement</a>
+      <a href="#creators" class="mobile-nav-link">L'Équipe Fondatrice</a>
+    </nav>
+    <div class="mobile-menu-footer">
+      <a href="demo.html" class="btn btn-primary" style="width:100%; justify-content:center; padding:1rem;">
+        <span>Faire une Demande</span>
+        <i data-lucide="arrow-right"></i>
+      </a>
+      <a href="login.html" class="btn btn-secondary" style="width:100%; justify-content:center; padding:0.9rem;">
+        <i data-lucide="lock"></i>
+        <span>Connexion Portail</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 1. HERO SECTION AVEC TYPOGRAPHIE SYNE & CANVAS INTERACTIF -->
+  <section class="hero-section" id="hero">
+    <canvas id="hero-interactive-canvas" class="hero-canvas-bg"></canvas>
+    <div class="hero-glow-orb" aria-hidden="true"></div>
+
+    <div class="container" style="position:relative; z-index:1;">
+      <div class="hero-rotator-wrapper">
+        <span>La passerelle souveraine pour vos</span>
+        <span class="rotator-keyword" id="hero-rotator-word">Réquisitions Judiciaires</span>
+      </div>
+
+      <h1 class="hero-title">
+        Sécurisez &amp; Automatisez vos
+        <span class="hero-title-highlight">Réquisitions Légales.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Le standard <strong>100% français et souverain</strong>, taillé pour la <strong>nouvelle loi européenne e-Evidence</strong> et les réquisitions CPP 60-1. Hébergé en France chez <strong>OVHcloud SecNumCloud</strong> avec une <strong>garantie Zéro Connaissance</strong> : <em>nous ne savons même pas ce qui transite entre vous et la police</em>.
+      </p>
+
+      <!-- CTA PRINCIPAL -->
+      <div class="hero-cta-group">
+        <a href="demo.html" class="btn btn-primary" data-magnetic style="padding:1rem 2.6rem; font-size:1.1rem;">
+          <span>Faire une Demande d'Accès</span>
+          <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="#calculator" class="btn btn-secondary" data-magnetic style="padding:1rem 2rem;">
+          <i data-lucide="calculator"></i>
+          <span>Simuler vos Économies</span>
+        </a>
+      </div>
+
+      <!-- 4 PILIERS DE CONFIANCE EN PASTILLES -->
+      <div class="hero-trust-bar">
+        <div class="trust-badges">
+          <div class="trust-pill" data-tilt>
+            <i data-lucide="flag"></i>
+            <span>100% Souverain Français • Hébergé chez OVHcloud</span>
+          </div>
+          <div class="trust-pill" data-tilt>
+            <i data-lucide="lock"></i>
+            <span>Architecture Zéro Connaissance (E2EE Étanche)</span>
+          </div>
+          <div class="trust-pill" data-tilt>
+            <i data-lucide="scale"></i>
+            <span>Aligné Loi e-Evidence 2026 &amp; CPP 60-1</span>
+          </div>
+          <div class="trust-pill" data-tilt>
+            <i data-lucide="shield-check"></i>
+            <span>Multi-Audité &amp; Scellement Cryptographique eIDAS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DYNAMIC METRICS STRIP AVEC COMPTEURS ANIMÉS & 3D TILT -->
+      <div class="hero-metrics-strip">
+        <div class="hero-metric-card" data-tilt>
+          <div class="hero-metric-icon">
+            <i data-lucide="zap"></i>
+          </div>
+          <div>
+            <div class="hero-metric-value" style="color:var(--blue-primary); font-size:1.6rem; letter-spacing:-0.03em;">Plus rapide</div>
+            <div class="hero-metric-desc">Traitement &amp; Délivrance Immédiats</div>
+          </div>
+        </div>
+
+        <div class="hero-metric-card" data-tilt>
+          <div class="hero-metric-icon" style="background:#ecfdf5; color:#059669;">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <div>
+            <div class="hero-metric-value" data-counter="100" data-suffix="%" style="color:#059669;">100%</div>
+            <div class="hero-metric-desc">Souverain OVHcloud SecNumCloud</div>
+          </div>
+        </div>
+
+        <div class="hero-metric-card" data-tilt>
+          <div class="hero-metric-icon" style="background:#fef2f2; color:#dc2626;">
+            <i data-lucide="shield-x"></i>
+          </div>
+          <div>
+            <div class="hero-metric-value" data-counter="0" data-suffix=" Faux OPJ" style="color:#dc2626;">0 Faux OPJ</div>
+            <div class="hero-metric-desc">Zéro Tentative Frauduleuse Passée</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 2. INFINITE TRUST MARQUEE -->
+  <section class="trust-marquee-section" aria-label="Certifications et conformité">
+    <div class="marquee-container">
+      <div class="marquee-track">
+        <div class="marquee-item"><i data-lucide="server"></i> <span>Hébergé en France chez OVHcloud</span></div>
+        <div class="marquee-item"><i data-lucide="shield"></i> <span>Qualifié SecNumCloud ANSSI</span></div>
+        <div class="marquee-item"><i data-lucide="scale"></i> <span>Conforme Règlement e-Evidence 2026</span></div>
+        <div class="marquee-item"><i data-lucide="file-check"></i> <span>CPP Art. 60-1 &amp; 60-2</span></div>
+        <div class="marquee-item"><i data-lucide="lock"></i> <span>Tunnel Zero-Knowledge E2EE</span></div>
+        <div class="marquee-item"><i data-lucide="check-circle-2"></i> <span>Zéro Risque CLOUD Act</span></div>
+        <div class="marquee-item"><i data-lucide="file-text"></i> <span>Scellement Cryptographique SHA-256 eIDAS</span></div>
+        <div class="marquee-item"><i data-lucide="server"></i> <span>Hébergé en France chez OVHcloud</span></div>
+        <div class="marquee-item"><i data-lucide="shield"></i> <span>Qualifié SecNumCloud ANSSI</span></div>
+        <div class="marquee-item"><i data-lucide="scale"></i> <span>Conforme Règlement e-Evidence 2026</span></div>
+        <div class="marquee-item"><i data-lucide="file-check"></i> <span>CPP Art. 60-1 &amp; 60-2</span></div>
+        <div class="marquee-item"><i data-lucide="lock"></i> <span>Tunnel Zero-Knowledge E2EE</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. KINETIC STATEMENT (COURT & COMPACT - MOITIÉ D'ESPACE) -->
+  <section class="kinetic-section" id="kinetic-statement">
+    <div class="container">
+      <p class="kinetic-statement">
+        <span class="kinetic-word">De</span>
+        <span class="kinetic-word" data-highlight="true">2</span>
+        <span class="kinetic-word" data-highlight="true">semaines</span>
+        <span class="kinetic-word">de</span>
+        <span class="kinetic-word">délai</span>
+        <span class="kinetic-word">à</span>
+        <span class="kinetic-word" data-highlight="true">quelques</span>
+        <span class="kinetic-word" data-highlight="true">secondes.</span>
+        <span class="kinetic-word">100%</span>
+        <span class="kinetic-word">Souverain.</span>
+        <span class="kinetic-word" data-highlight="true">0</span>
+        <span class="kinetic-word" data-highlight="true">Amende.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- 4. COMMENT ÇA MARCHE EN 3 ÉTAPES -->
+  <section class="section" id="workflow" style="border-top:1px solid var(--border-subtle); background:var(--bg-subtle);">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">Simplicité &amp; Confidentialité</span>
+        <h2 class="section-title">Comment Fonctionne LexaSafe en 3 Étapes</h2>
+        <p class="section-desc">
+          Une passerelle neutre et étanche qui fluidifie les échanges légaux tout en protégeant vos données sensibles.
+        </p>
+      </div>
+
+      <div class="workflow-grid">
+        
+        <!-- Étape 1 -->
+        <div class="workflow-step-card animate-on-scroll">
+          <div class="workflow-step-number">1</div>
+          <h3 style="color:var(--blue-navy); margin-bottom:0.75rem;">Dépôt Sécurisé par l'OPJ</h3>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.6;">
+            L'Officier dépose sa réquisition officielle (CPP Art. 60-1 / 60-2 ou e-Evidence) sur le portail sécurisé LexaSafe (service 100% gratuit pour les forces de l'ordre).
+          </p>
+        </div>
+
+        <!-- Étape 2 -->
+        <div class="workflow-step-card animate-on-scroll">
+          <div class="workflow-step-number" style="background:#059669;">2</div>
+          <h3 style="color:var(--blue-navy); margin-bottom:0.75rem;">Authentification &amp; Zéro Connaissance</h3>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.6;">
+            LexaSafe authentifie cryptographiquement l'officier et neutralise les faux policiers. Le tunnel chiffre le contenu de bout en bout : <strong>nous ne pouvons rien intercepter</strong>.
+          </p>
+        </div>
+
+        <!-- Étape 3 -->
+        <div class="workflow-step-card animate-on-scroll">
+          <div class="workflow-step-number" style="background:#0a192f;">3</div>
+          <h3 style="color:var(--blue-navy); margin-bottom:0.75rem;">Remise Chiffrée &amp; Scellée</h3>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.6;">
+            Votre entreprise génère l'archive <strong>.ZIP scellée eIDAS</strong> en 1 clic. Remise instantanée avec horodatage probatoire opposable en justice.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 5. LES 4 PILIERS SOUVERAINS & BENTO MATRIX -->
+  <section class="section" id="avantages" style="border-top:1px solid var(--border-subtle); background:#ffffff;">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">Excellence &amp; Transparence</span>
+        <h2 class="section-title">Pourquoi Choisir LexaSafe ?</h2>
+        <p class="section-desc">
+          Une technologie 100% française, souveraine, sans dépendance étrangère et conforme aux standards de sécurité les plus exigeants.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        
+        <div class="glass-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
+            <div class="feature-icon-box" style="background:#eff6ff; color:#1d4ed8;">
+              <i data-lucide="flag"></i>
+            </div>
+            <h3 style="color:var(--blue-navy);">100% Souverain • Hébergé chez OVHcloud</h3>
+          </div>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.65;">
+            Développé en France sans aucune dépendance extérieure. Nos infrastructures sont hébergées sur les serveurs français d'<strong>OVHcloud</strong> (qualifiés SecNumCloud ANSSI). Immunité totale face au CLOUD Act et aux lois extraterritoriales.
+          </p>
+        </div>
+
+        <div class="glass-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
+            <div class="feature-icon-box" style="background:#ecfdf5; color:#059669;">
+              <i data-lucide="scale"></i>
+            </div>
+            <h3 style="color:var(--blue-navy);">Conforme Nouvelle Loi e-Evidence</h3>
+          </div>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.65;">
+            Notre plateforme est nativement taillée pour le nouveau <strong>Règlement Européen e-Evidence</strong> et les réquisitions judiciaires françaises (CPP Art. 60-1 / 60-2). Respectez les délais stricts de 8h en cas d'urgence sans saturer vos équipes.
+          </p>
+        </div>
+
+        <div class="glass-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
+            <div class="feature-icon-box" style="background:#eff6ff; color:#1d4ed8;">
+              <i data-lucide="eye-off"></i>
+            </div>
+            <h3 style="color:var(--blue-navy);">Transparence &amp; Zéro Connaissance</h3>
+          </div>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.65;">
+            <strong>Nous ne savons même pas ce qui transite entre vous et la police.</strong> Grâce à notre architecture Zero-Knowledge avec chiffrement E2EE de bout en bout, seul l'OPJ destinataire possède la clé pour ouvrir les archives remises.
+          </p>
+        </div>
+
+        <div class="glass-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
+            <div class="feature-icon-box" style="background:#ecfdf5; color:#059669;">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <h3 style="color:var(--blue-navy);">Multi-Audité &amp; Normes de Sécurité</h3>
+          </div>
+          <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.65;">
+            Soumis à des audits continus de sécurité offensive et tests d'intrusion. Scellement cryptographique SHA-256 eIDAS, journal d'audit infalsifiable et protection absolue contre le vol d'identifiants.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. DANGERS & RISQUES ÉVITÉS -->
+  <section class="section" id="dangers" style="border-top:1px solid var(--border-subtle); background:var(--bg-subtle);">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <div class="danger-badge" style="margin-bottom:1rem;">
+          <i data-lucide="alert-triangle"></i>
+          <span>Risques Évités pour votre Entreprise</span>
+        </div>
+        <h2 class="section-title">
+          Les Dangers Réels des Réquisitions Non Sécurisées
+        </h2>
+        <p class="section-desc">
+          Le traitement manuel par email ou fax expose votre entreprise à des failles de sécurité majeures et à des sanctions financières lourdes.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.75rem;" class="features-grid">
+        
+        <!-- DANGER 1 : AMENDE 2% DU CA -->
+        <div class="danger-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1.25rem;">
+            <div class="danger-icon-box">
+              <i data-lucide="alert-octagon" style="width:24px;height:24px;"></i>
+            </div>
+            <div>
+              <span class="danger-badge">Sanction Maximale</span>
+              <h3 style="font-size:1.15rem; color:var(--blue-navy); margin-top:0.3rem;">Amende de 2% du CA</h3>
+            </div>
+          </div>
+          <p style="font-size:0.925rem; color:var(--text-secondary); line-height:1.6;">
+            Transmettre des données à un faux policier constitue une violation grave du RGPD et du Code des Télécoms, passible d'une <strong>amende jusqu'à 2% de votre chiffre d'affaires mondial</strong>.
+          </p>
+        </div>
+
+        <!-- DANGER 2 : FAUX POLICIERS & USURPATION -->
+        <div class="danger-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1.25rem;">
+            <div class="danger-icon-box">
+              <i data-lucide="user-x" style="width:24px;height:24px;"></i>
+            </div>
+            <div>
+              <span class="danger-badge">Piratage Actif</span>
+              <h3 style="font-size:1.15rem; color:var(--blue-navy); margin-top:0.3rem;">Attaques par Faux OPJ</h3>
+            </div>
+          </div>
+          <p style="font-size:0.925rem; color:var(--text-secondary); line-height:1.6;">
+            Des cybercriminels usurpent des identités de policiers pour voler les données confidentielles de vos clients. Sans vérification cryptographique, le risque d'exfiltration est permanent.
+          </p>
+        </div>
+
+        <!-- DANGER 3 : DÉLAIS CRITIQUES (8H) -->
+        <div class="danger-card animate-on-scroll">
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1.25rem;">
+            <div class="danger-icon-box">
+              <i data-lucide="timer-off" style="width:24px;height:24px;"></i>
+            </div>
+            <div>
+              <span class="danger-badge">Urgence Pénale</span>
+              <h3 style="font-size:1.15rem; color:var(--blue-navy); margin-top:0.3rem;">Délais d'Urgence (8h)</h3>
+            </div>
+          </div>
+          <p style="font-size:0.925rem; color:var(--text-secondary); line-height:1.6;">
+            Une réquisition urgente exige une réponse en moins de <strong>8 heures</strong>, contre <strong>2 semaines</strong> en traitement manuel. Tout retard expose vos dirigeants à des poursuites.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 7. SIMULATEUR ROI & RISQUES ÉVITÉS -->
+  <section class="section" id="calculator" style="background:#ffffff; border-top:1px solid var(--border-subtle);">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">Simulateur d'Impact</span>
+        <h2 class="section-title">Mesurez votre Gain de Temps &amp; le Risque Évité</h2>
+        <p class="section-desc">
+          Comparez les délais réels du Code de Procédure Pénale et calculez le montant de sanction de 2% du CA neutralisé.
+        </p>
+      </div>
+
+      <div class="calculator-card animate-on-scroll">
+        <div class="calc-layout">
+          <div class="calc-controls">
+            
+            <div class="calc-control-group">
+              <div class="calc-control-label">
+                <span>Chiffre d'Affaires Annuel Mondial :</span>
+                <span class="calc-value-display" id="calc-revenue-display">15 M€</span>
+              </div>
+              <input type="range" class="range-slider" id="calc-revenue-slider" min="2" max="250" step="1" value="15" aria-label="Chiffre d'affaires en millions d'euros">
+              <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-top:0.45rem;">
+                <span>2 M€ (PME)</span>
+                <span>50 M€ (ETI)</span>
+                <span>250 M€ (Grand Compte)</span>
+              </div>
+            </div>
+
+            <div class="calc-control-group">
+              <div class="calc-control-label">
+                <span>Volume Annuel de Réquisitions :</span>
+                <span class="calc-value-display" id="calc-volume-display">40 / an</span>
+              </div>
+              <input type="range" class="range-slider" id="calc-volume-slider" min="5" max="300" step="5" value="40" aria-label="Volume annuel de réquisitions">
+              <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-top:0.45rem;">
+                <span>5 / an</span>
+                <span>100 / an</span>
+                <span>300+ / an</span>
+              </div>
+            </div>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:1.25rem; font-size:0.85rem; color:var(--text-secondary); line-height:1.55;">
+              <div style="font-weight:700; color:var(--blue-navy); margin-bottom:0.45rem; display:flex; align-items:center; gap:0.5rem;">
+                <i data-lucide="timer" style="width:18px;height:18px;color:#1d4ed8;"></i>
+                <span>Impact Concret sur vos Délais d'Instruction :</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; padding-bottom:0.35rem; border-bottom:1px dashed #e2e8f0;">
+                <span>⚡ <strong>Urgences Pénales (8h max légal) :</strong></span>
+                <span style="color:#059669; font-weight:700;">4 min chrono</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>📁 <strong>Dossiers Complexes (2 sem. manuel) :</strong></span>
+                <span style="color:#059669; font-weight:700;">&lt; 24h automatisé</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-results-box">
+            <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; color:#bfdbfe; font-weight:700;">
+              Amende Maximale Évitée (2% du CA)
+            </div>
+            <div class="calc-fine-number" id="calc-fine-display">300 000 €</div>
+            <div style="font-size:0.825rem; color:#fca5a5; margin-bottom:1rem; font-weight:500;">
+              Risque de sanction RGPD &amp; CPP Art. 60-1 neutralisé
+            </div>
+
+            <div class="calc-savings-strip">
+              <div class="calc-sub-stat">
+                <span class="calc-sub-val" id="calc-time-saved">157 h / an</span>
+                <span class="calc-sub-lbl">Temps juriste &amp; DPO libéré</span>
+              </div>
+              <div class="calc-sub-stat">
+                <span class="calc-sub-val" id="calc-cost-savings">10 205 € / an</span>
+                <span class="calc-sub-lbl">Économies RH directes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:3rem;" class="animate-on-scroll">
+        <a href="demo.html" class="btn btn-primary" style="padding:1rem 2.5rem; font-size:1.05rem;">
+          <span>Faire une Demande pour mon Entreprise</span>
+          <i data-lucide="arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. TARIFS & MODÈLE DE DÉPLOIEMENT (STYLE UMANO) -->
+  <section class="pricing-section" id="tarifs">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">Transparence Tarifaire</span>
+        <h2 class="section-title">Offres &amp; Déploiements Souverains</h2>
+        <p class="section-desc">
+          Une tarification claire et sans surprise, adaptée de la PME en croissance jusqu'au Grand Compte d'Importance Vitale.
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        
+        <!-- Carte 1 : SaaS Souverain -->
+        <div class="pricing-card featured animate-on-scroll">
+          <span class="pricing-badge-popular">Standard Souverain</span>
+          <h3 class="pricing-title">Abonnement SaaS Souverain</h3>
+          <p style="color:var(--text-secondary); font-size:0.95rem;">
+            La passerelle clé en main hébergée en France chez OVHcloud SecNumCloud pour automatiser vos réquisitions.
+          </p>
+          <div class="pricing-rate">Sur Mesure</div>
+          
+          <ul class="pricing-features-list">
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Traitement illimité des réquisitions OPJ</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Tunnel Zero-Knowledge E2EE étanche</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Authentification certifiée des officiers</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Génération d'archives scellées eIDAS</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Registre légal CNIL et export d'audit</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Support juridique &amp; technique réactif 7j/7</span></li>
+          </ul>
+
+          <a href="demo.html" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:auto;">
+            <span>Démarrer avec le SaaS Souverain</span>
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Carte 2 : On-Premise / Grand Compte -->
+        <div class="pricing-card animate-on-scroll">
+          <h3 class="pricing-title">Dédié &amp; On-Premise</h3>
+          <p style="color:var(--text-secondary); font-size:0.95rem;">
+            Déploiement sur votre infrastructure privée ou cloud souverain dédié avec intégration SI &amp; ERP sur mesure.
+          </p>
+          <div class="pricing-rate">Sur Devis</div>
+
+          <ul class="pricing-features-list">
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Instance dédiée isolée (On-Premise / SecNumCloud)</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Connecteurs SI, ERP &amp; API Webhooks personnalisés</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>SLA de disponibilité garanti 99.99%</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Gestion des clés de chiffrement client (HSM / KMS)</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Accompagnement DPO &amp; RSSI dédié</span></li>
+            <li class="pricing-feature-item"><i data-lucide="check"></i> <span>Audits d'intrusion annuels inclus</span></li>
+          </ul>
+
+          <a href="demo.html" class="btn btn-secondary" style="width:100%; justify-content:center; margin-top:auto;">
+            <span>Contacter l'Équipe Déploiement</span>
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+
+  <!-- 10. CRÉATEURS / ÉQUIPE FONDATRICE -->
+  <section class="section" id="creators" style="border-top:1px solid var(--border-subtle); background:#ffffff;">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">L'Équipe Fondatrice</span>
+        <h2 class="section-title">Les Bâtisseurs de LexaSafe</h2>
+        <p class="section-desc">
+          Deux étudiants français en BTS, animés par la passion de la tech et de la cyber pour simplifier la justice et bâtir une souveraineté numérique sans concession.
+        </p>
+      </div>
+
+      <div class="creators-row animate-on-scroll">
+        
+        <!-- Créateur 1 : 0xzEus -->
+        <div class="creator-compact-card">
+          <div class="creator-avatar-box">
+            <img src="assets/portraits/0xzeus_official.png" alt="0xzEus" class="creator-avatar-img">
+          </div>
+          <div class="creator-info">
+            <div class="creator-header-name">
+              <span class="creator-name-text">0xzEus</span>
+              <div class="flag-fr"><span></span><span></span><span></span></div>
+            </div>
+            <div class="creator-role-tag">Cybersécurité Offensive &amp; Lois Cyber • Co-Fondateur</div>
+            <p class="creator-desc-text">
+              Étudiant en BTS et passionné de cybersécurité. Ses compétences en sécurité offensive lui permettent d'anticiper les failles pour blinder la plateforme, tout en maîtrisant les lois cyber (loi e-Evidence, CPP, RGPD).
+            </p>
+          </div>
+        </div>
+
+        <!-- Créateur 2 : Tueexiz -->
+        <div class="creator-compact-card">
+          <div class="creator-avatar-box">
+            <img src="assets/portraits/tueexiz_official.png" alt="Tueexiz" class="creator-avatar-img">
+          </div>
+          <div class="creator-info">
+            <div class="creator-header-name">
+              <span class="creator-name-text">Tueexiz</span>
+              <div class="flag-fr"><span></span><span></span><span></span></div>
+            </div>
+            <div class="creator-role-tag">Président &amp; Lead Développeur • Co-Fondateur</div>
+            <p class="creator-desc-text">
+              Étudiant en BTS, président et développeur en chef de LexaSafe. Il architecture l'ensemble de la passerelle pour simplifier la justice et automatiser les échanges légaux aux normes de la loi e-Evidence.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center; margin-top:3rem;" class="animate-on-scroll">
+        <p style="font-size:0.95rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+          Pour contacter les fondateurs : <a href="mailto:contact@lexasafe.fr" style="color:var(--blue-primary); font-weight:700;">contact@lexasafe.fr</a>
+        </p>
+        <a href="createurs.html" class="btn btn-secondary btn-sm">
+          <i data-lucide="file-text" style="width:15px;height:15px;"></i>
+          <span>Découvrir le Profil Détaillé des Créateurs</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 11. FAQ ACCORDION -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">Questions Fréquentes</span>
+        <h2 class="section-title">Tout Savoir sur LexaSafe</h2>
+        <p class="section-desc">
+          Les réponses à vos questions techniques, juridiques et organisationnelles.
+        </p>
+      </div>
+
+      <div class="faq-list animate-on-scroll">
+        
+        <div class="faq-item">
+          <button class="faq-question-btn">
+            <span>Comment LexaSafe garantit-il l'architecture Zéro Connaissance ?</span>
+            <span class="faq-icon"><i data-lucide="plus" style="width:16px;height:16px;"></i></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              LexaSafe applique un chiffrement asymétrique de bout en bout (E2EE). Les fichiers et métadonnées sont chiffrés directement sur le poste de l'entreprise émettrice avec la clé publique certifiée de l'officier de police judiciaire. Seul l'OPJ possède la clé privée correspondante. Même les administrateurs de LexaSafe et les serveurs d'hébergement ne peuvent lire les contenus transitant sur la passerelle.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn">
+            <span>Le service est-il gratuit pour les forces de l'ordre ?</span>
+            <span class="faq-icon"><i data-lucide="plus" style="width:16px;height:16px;"></i></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Oui, à 100%. L'accès pour les Officiers de Police Judiciaire (Police Nationale, Gendarmerie, Douanes, Magistrats) est entièrement gratuit et sans engagement, afin de faciliter et d'accélérer les enquêtes judiciaires légitimes dans le respect des lois de la République.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn">
+            <span>Comment bloquez-vous les usurpations d'identité d'OPJ ?</span>
+            <span class="faq-icon"><i data-lucide="plus" style="width:16px;height:16px;"></i></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Chaque dépôt de réquisition fait l'objet d'une vérification cryptographique rigoureuse de l'adresse institutionnelle (@gendarmerie.interieur.gouv.fr, @interieur.gouv.fr, @justice.fr) et de son certificat d'authentification. Toute tentative utilisant une adresse compromise ou forgée est immédiatement neutralisée et consignée dans le registre d'audit.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn">
+            <span>Quelle est la conformité avec le Règlement Européen e-Evidence ?</span>
+            <span class="faq-icon"><i data-lucide="plus" style="width:16px;height:16px;"></i></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              LexaSafe est nativement conçu pour les exigences du nouveau Règlement e-Evidence 2026 : respect strict du délai d'urgence de 8 heures pour les injonctions de production d'éléments de preuve électroniques (EPOC-PR), traçabilité infalsifiable et format d'archive scellée reconnu dans l'ensemble de l'Union Européenne.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 12. BANNIÈRE DE CONVERSION FINALE -->
+  <section class="cta-banner-section">
+    <div class="container animate-on-scroll">
+      <h2 class="cta-banner-title">Prêt à Sécuriser vos Échanges Légaux ?</h2>
+      <p style="color:#bfdbfe; font-size:1.15rem; max-width:640px; margin-inline:auto; margin-bottom:2.5rem; line-height:1.6;">
+        Déployez LexaSafe en quelques minutes. Protégez les données de vos clients et gagnez un temps précieux.
+      </p>
+      <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+        <a href="demo.html" class="btn btn-primary" style="background:#2563eb; padding:1.05rem 2.75rem; font-size:1.1rem; box-shadow:0 8px 25px rgba(37, 99, 235, 0.4);">
+          <span>Faire une Demande d'Accès</span>
+          <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="mailto:contact@lexasafe.fr" class="btn btn-secondary" style="background:transparent; color:#ffffff; border-color:rgba(255,255,255,0.3); padding:1.05rem 2rem;">
+          <i data-lucide="mail"></i>
+          <span>Contacter un Conseiller</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. FOOTER STUDIO & STATUT DU SYSTÈME -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid" style="grid-template-columns:1.4fr 1fr 1fr 1fr;">
+        
+        <div>
+          <a href="index.html" class="brand-logo" style="margin-bottom:1rem;">
+            <img src="assets/logo.png" alt="LexaSafe" style="height:44px; width:auto;">
+          </a>
+          <p class="footer-brand-desc">
+            Le standard 100% français pour sécuriser, authentifier et automatiser le traitement des réquisitions judiciaires.
+          </p>
+          <div style="margin-top:1.25rem;">
+            <span class="badge-sovereign" style="font-size:0.8rem;">
+              <div class="flag-fr"><span></span><span></span><span></span></div>
+              <span>0xzEus &amp; Tueexiz • 100% France</span>
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-links">
+            <li><a href="#workflow" class="footer-link">Plateforme</a></li>
+            <li><a href="#avantages" class="footer-link">Sécurité Souveraine</a></li>
+            <li><a href="#dangers" class="footer-link">Risques Évités</a></li>
+            <li><a href="#calculator" class="footer-link">Simulateur de Gain</a></li>
+            <li><a href="#tarifs" class="footer-link">Tarifs &amp; Déploiement</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Ressources</div>
+          <ul class="footer-links">
+            <li><a href="demo.html" class="footer-link">Faire une Demande</a></li>
+            <li><a href="login.html" class="footer-link">Portail de Connexion</a></li>
+            <li><a href="createurs.html" class="footer-link">Équipe Fondatrice</a></li>
+            <li><a href="createurs.html" class="footer-link">Clés PGP Publiques</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Légal &amp; Conformité</div>
+          <ul class="footer-links">
+            <li><a href="cgu.html" class="footer-link">CGU &amp; SLA de Service</a></li>
+            <li><a href="mentions-legales.html" class="footer-link">Mentions Légales (OVHcloud)</a></li>
+            <li><a href="politique-confidentialite.html" class="footer-link">Politique de Confidentialité</a></li>
+            <li><a href="cookies.html" class="footer-link">Gestion des Cookies (0 Tracker)</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 LexaSafe France. Tous droits réservés.
+        </div>
+        <div class="system-status-indicator">
+          <span style="width:8px;height:8px;border-radius:50%;background:#059669;display:inline-block;"></span>
+          <span>Tous les systèmes opérationnels • OVHcloud France</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/calculator.js?v=20260813_v7"></script>
+  <script src="js/app.js?v=20260813_v7"></script>
+</body>
+</html>

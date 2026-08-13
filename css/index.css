@@ -1,0 +1,347 @@
+/* ==========================================================================
+   LEXASAFE - DESIGN SYSTEM SOUVERAIN & STUDIO
+   Direction Artistique : Calquée sur Umano Design Studio
+   Typographie : Syne (Display, Titres, Chiffres, CTA) + Inter (Corps, Métadonnées)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@500;600;700;800&display=swap');
+
+:root {
+  /* Surfaces & Fonds (Dégradé Blanc Cassé & Bleu Clair Luminous) */
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f0f6ff;
+  --bg-neutral-light: #e6f0fc;
+  --bg-ice-gradient: linear-gradient(160deg, #f8fafc 0%, #edf4fc 35%, #dbeafe 100%);
+  --bg-capsule: rgba(255, 255, 255, 0.92);
+  --bg-capsule-scrolled: rgba(255, 255, 255, 0.98);
+  --bg-blue-tint: #eff6ff;
+  --bg-blue-soft: #dbeafe;
+  --bg-dark-card: #0a0d12;
+
+  /* Palette de Couleurs & Bleus Souverains */
+  --blue-france: #002654;
+  --blue-navy: #0a192f;
+  --blue-primary: #1d4ed8;
+  --blue-hover: #1e40af;
+  --blue-accent: #2563eb;
+  --blue-electric: #0284c7;
+  --blue-border: #bfdbfe;
+  --blue-glow: rgba(29, 78, 216, 0.28);
+
+  /* Statuts de Confiance & Validations */
+  --emerald-valid: #059669;
+  --emerald-bg: #ecfdf5;
+  --emerald-border: #a7f3d0;
+  --emerald-text: #065f46;
+
+  /* Alertes & Dangers Évités */
+  --amber-alert: #d97706;
+  --amber-bg: #fffbeb;
+  --amber-border: #fde68a;
+
+  --crimson-threat: #dc2626;
+  --crimson-bg: #fef2f2;
+  --crimson-border: #fecaca;
+  --crimson-hover: #b91c1c;
+
+  /* Typographie & Lisibilité */
+  --text-main: #0a192f;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-white: #ffffff;
+  --text-dark: #0a0d12;
+
+  /* Bordures Nettes & Chirurgicales */
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-active: #93c5fd;
+  --border-dark: #27272a;
+
+  /* Rayons d'angle (Border Radius) */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 9999px;
+
+  /* Ombres Portées de Haute Précision */
+  --shadow-xs: 0 1px 2px rgba(10, 25, 47, 0.04);
+  --shadow-sm: 0 2px 4px rgba(10, 25, 47, 0.05);
+  --shadow-card: 0 10px 30px -5px rgba(10, 25, 47, 0.06), 0 2px 8px -2px rgba(10, 25, 47, 0.03);
+  --shadow-card-hover: 0 20px 40px -8px rgba(29, 78, 216, 0.12), 0 4px 12px -2px rgba(29, 78, 216, 0.05);
+  --shadow-capsule: 0 8px 32px rgba(10, 25, 47, 0.08), 0 2px 6px rgba(10, 25, 47, 0.04);
+  --shadow-glow: 0 0 40px rgba(29, 78, 216, 0.22);
+  --shadow-danger: 0 12px 28px -4px rgba(220, 38, 38, 0.14);
+
+  /* Typographies */
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Transitions Naturelles */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--bg-subtle);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-primary);
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-body);
+  background-color: #f8fafc;
+  color: var(--text-main);
+  scroll-behavior: smooth;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background: linear-gradient(160deg, #f8fafc 0%, #eff6ff 40%, #dbeafe 100%);
+  background-attachment: fixed;
+  font-family: var(--font-body);
+  color: var(--text-main);
+}
+
+/* Typographie & Titres en Syne */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--blue-navy);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+h2 {
+  font-size: clamp(1.85rem, 3.8vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--blue-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover {
+  color: var(--blue-hover);
+}
+
+/* Accessibilité & Focus Ring */
+:focus-visible {
+  outline: 2px solid var(--blue-primary);
+  outline-offset: 3px;
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.container-narrow {
+  max-width: 920px;
+}
+
+.section {
+  padding-block: 6rem;
+  position: relative;
+  z-index: 1;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 820px;
+  margin-inline: auto;
+  margin-bottom: 4rem;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--blue-primary);
+  background: var(--bg-blue-tint);
+  border: 1px solid var(--blue-border);
+  padding: 0.35rem 0.95rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1.25rem;
+}
+
+.section-title {
+  margin-bottom: 1.2rem;
+}
+
+.section-desc {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Badges Institutionnels */
+.badge-sovereign,
+.badge-sovereign:hover,
+.badge-sovereign:focus,
+.badge-sovereign:active {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 1.15rem;
+  background: var(--bg-blue-tint) !important;
+  border: 1px solid var(--blue-border) !important;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--blue-navy) !important;
+  cursor: default !important;
+  user-select: none !important;
+}
+
+/* Drapeau Français Stylisé */
+.flag-fr {
+  display: inline-flex;
+  width: 17px;
+  height: 12px;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+.flag-fr span:nth-child(1) { width: 33.33%; background: #002654; }
+.flag-fr span:nth-child(2) { width: 33.34%; background: #ffffff; }
+.flag-fr span:nth-child(3) { width: 33.33%; background: #ce1126; }
+
+/* Boutons Globaux */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.975rem;
+  padding: 0.85rem 1.85rem;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--blue-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(29, 78, 216, 0.28);
+}
+.btn-primary:hover {
+  background: var(--blue-hover);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.38);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--blue-navy);
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-xs);
+}
+.btn-secondary:hover {
+  background: var(--bg-subtle);
+  border-color: var(--blue-primary);
+  color: var(--blue-primary);
+  transform: translateY(-2px);
+}
+
+.btn-dark {
+  background: var(--blue-navy);
+  color: #ffffff;
+}
+.btn-dark:hover {
+  background: #112240;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn-sm {
+  padding: 0.55rem 1.15rem;
+  font-size: 0.85rem;
+}
+
+/* Animations Fluides Déclenchées au Défilement */
+.animate-on-scroll {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-ready .animate-on-scroll:not(.visible) {
+  opacity: 0.15;
+  transform: translateY(18px);
+}
+
+.js-ready .animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
