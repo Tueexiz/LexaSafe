@@ -1,13 +1,17 @@
 /**
  * LEXASAFE - STUDIO APPLICATION CORE & ADVANCED ANIMATION ENGINE
- * Native Smooth Scroll • Canvas Interactif • 3D Card Tilt • Magnetic Buttons • Scroll Progress • Kinetic Reveal
+ * Native GPU Smooth Scroll • Canvas Interactif • 3D Card Tilt • Magnetic Buttons • Scroll Progress • Kinetic Reveal • Custom Selects
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
   // ─── 1. Initialisation des Icônes Lucide ────────────────────────────
   if (window.lucide) {
-    window.lucide.createIcons();
+    try {
+      window.lucide.createIcons();
+    } catch (e) {
+      console.warn('Lucide icons warning:', e);
+    }
   }
 
   // ─── 2. Lueur Élégante Autour de la Souris (Cursor Ambient Glow) ──
@@ -25,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-  });
+  }, { passive: true });
 
   function renderCursorGlow() {
     glowX += (mouseX - glowX) * 0.12;
@@ -37,50 +41,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   renderCursorGlow();
 
-  // ─── 3. Smooth Mousewheel Gliding Scroll Engine ───────────────────
-  let scrollTarget = window.scrollY || document.documentElement.scrollTop;
-  let scrollCurrent = scrollTarget;
-  let isWheelScrolling = false;
+  // ─── 3. Kinetic Scroll Word-by-Word Reveal ────────────────────────
+  function updateKineticScroll() {
+    const kineticSection = document.getElementById('kinetic-statement');
+    if (!kineticSection) return;
 
-  window.addEventListener('wheel', (e) => {
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if (maxScroll <= 0) return;
+    const kineticWords = kineticSection.querySelectorAll('.kinetic-word');
+    if (kineticWords.length === 0) return;
 
-    scrollTarget = Math.max(0, Math.min(maxScroll, scrollTarget + e.deltaY * 0.95));
+    const rect = kineticSection.getBoundingClientRect();
+    const windowH = window.innerHeight;
+    const totalWords = kineticWords.length;
 
-    if (!isWheelScrolling) {
-      isWheelScrolling = true;
-      requestAnimationFrame(smoothWheelLoop);
-    }
-  }, { passive: true });
+    const scrollProgress = (windowH * 0.75 - rect.top) / (rect.height + windowH * 0.4);
+    const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
+    const activeWordCount = Math.floor(clampedProgress * totalWords);
 
-  window.addEventListener('scroll', () => {
-    if (!isWheelScrolling) {
-      scrollTarget = window.scrollY || document.documentElement.scrollTop;
-      scrollCurrent = scrollTarget;
-    }
-  }, { passive: true });
-
-  function smoothWheelLoop() {
-    const diff = scrollTarget - scrollCurrent;
-    if (Math.abs(diff) > 0.6) {
-      scrollCurrent += diff * 0.085; // Damping lerp
-      window.scrollTo(0, scrollCurrent);
-      requestAnimationFrame(smoothWheelLoop);
-    } else {
-      scrollCurrent = scrollTarget;
-      window.scrollTo(0, scrollCurrent);
-      isWheelScrolling = false;
-    }
+    kineticWords.forEach((word, idx) => {
+      if (idx <= activeWordCount) {
+        word.classList.add('active', 'lit');
+      } else {
+        word.classList.remove('active', 'lit');
+      }
+    });
   }
 
   // ─── 4. Scroll Progress Bar & Floating Header ─────────────────────
   const header = document.querySelector('.site-header');
   const progressBar = document.getElementById('capsule-progress-bar');
-  let ticking = false;
+  let isScrollTicking = false;
 
   function onScrollUpdate() {
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     const progress = docHeight > 0 ? Math.min(Math.max(scrollY / docHeight, 0), 1) : 0;
 
@@ -96,29 +88,29 @@ document.addEventListener('DOMContentLoaded', () => {
       progressBar.style.transform = `scaleX(${progress})`;
     }
 
-    // Kinetic Scroll Update
+    // Kinetic Scroll Word Reveal
     updateKineticScroll();
 
-    ticking = false;
+    isScrollTicking = false;
   }
 
   window.addEventListener('scroll', () => {
-    if (!ticking) {
+    if (!isScrollTicking) {
       window.requestAnimationFrame(onScrollUpdate);
-      ticking = true;
+      isScrollTicking = true;
     }
   }, { passive: true });
   onScrollUpdate();
 
-  // ─── 3. Canvas Interactif Cyber Constellation (Hero) ─────────────
+  // ─── 5. Canvas Interactif Cyber Constellation (Hero) ─────────────
   const canvas = document.getElementById('hero-interactive-canvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let width, height;
     let particles = [];
-    const particleCount = 45;
-    const maxDistance = 125;
-    let mouse = { x: -1000, y: -1000, radius: 150 };
+    const particleCount = 40;
+    const maxDistance = 120;
+    let mouse = { x: -1000, y: -1000, radius: 140 };
 
     function resizeCanvas() {
       const rect = canvas.parentElement.getBoundingClientRect();
@@ -134,8 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.65;
-        this.vy = (Math.random() - 0.5) * 0.65;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = (Math.random() - 0.5) * 0.6;
         this.radius = Math.random() * 2 + 1.2;
         this.baseColor = Math.random() > 0.3 ? 'rgba(29, 78, 216, ' : 'rgba(5, 150, 105, ';
       }
@@ -147,14 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (this.x < 0 || this.x > width) this.vx *= -1;
         if (this.y < 0 || this.y > height) this.vy *= -1;
 
-        // Interaction avec la souris
         const dx = mouse.x - this.x;
         const dy = mouse.y - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < mouse.radius) {
-          const force = (1 - dist / mouse.radius) * 0.8;
-          this.x -= (dx / dist) * force * 3;
-          this.y -= (dy / dist) * force * 3;
+          const force = (1 - dist / mouse.radius) * 0.7;
+          this.x -= (dx / dist) * force * 2.5;
+          this.y -= (dy / dist) * force * 2.5;
         }
       }
 
@@ -177,34 +168,32 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < particles.length; i++) {
-        // Liens entre particules proches
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < maxDistance) {
-            const alpha = (1 - dist / maxDistance) * 0.22;
+            const alpha = (1 - dist / maxDistance) * 0.2;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.strokeStyle = `rgba(29, 78, 216, ${alpha})`;
-            ctx.lineWidth = 0.9;
+            ctx.lineWidth = 0.85;
             ctx.stroke();
           }
         }
 
-        // Ligne vers le curseur
         const mdx = particles[i].x - mouse.x;
         const mdy = particles[i].y - mouse.y;
         const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
         if (mdist < mouse.radius) {
-          const alpha = (1 - mdist / mouse.radius) * 0.35;
+          const alpha = (1 - mdist / mouse.radius) * 0.3;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(mouse.x, mouse.y);
           ctx.strokeStyle = `rgba(37, 99, 235, ${alpha})`;
-          ctx.lineWidth = 1.1;
+          ctx.lineWidth = 1.0;
           ctx.stroke();
         }
 
@@ -236,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animateParticles();
   }
 
-  // ─── 4. Effet 3D Tilt & Specular Shine (GPU Acceleré) ────────────
+  // ─── 6. Effet 3D Tilt & Specular Shine (GPU Acceleré) ────────────
   const tiltCards = document.querySelectorAll('[data-tilt]');
   tiltCards.forEach((card) => {
     if (!card.querySelector('.card-shine')) {
@@ -252,8 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const rotateX = ((y - centerY) / centerY) * -6;
-      const rotateY = ((x - centerX) / centerX) * 6;
+      const rotateX = ((y - centerY) / centerY) * -5;
+      const rotateY = ((x - centerX) / centerX) * 5;
 
       card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
       card.style.setProperty('--shine-x', `${(x / rect.width) * 100}%`);
@@ -270,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ─── 5. Boutons Magnétiques (Magnetic Pull Effect) ────────────────
+  // ─── 7. Boutons Magnétiques (Magnetic Pull Effect) ────────────────
   const magneticButtons = document.querySelectorAll('[data-magnetic]');
   magneticButtons.forEach((btn) => {
     btn.addEventListener('mousemove', (e) => {
@@ -285,39 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ─── 6. Intersection Observer & Scroll Animations ─────────────────
-  document.documentElement.classList.add('js-ready');
-
-  // Démarrage immédiat des compteurs du Hero
-  document.querySelectorAll('.hero-metrics-strip [data-counter]').forEach(cnt => {
-    startCounterAnimation(cnt);
-  });
-
-  const animatedElements = document.querySelectorAll('.animate-on-scroll');
-  if (animatedElements.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-
-          const counters = entry.target.querySelectorAll('[data-counter]');
-          counters.forEach((cnt) => startCounterAnimation(cnt));
-
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px 100px 0px' });
-
-    animatedElements.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight + 150) {
-        el.classList.add('visible');
-      }
-      observer.observe(el);
-    });
-  }
-
-  // ─── 7. Compteurs Chiffrés Animés (Stats Counters) ───────────────
+  // ─── 8. Compteurs Chiffrés Animés (Stats Counters) ───────────────
   function startCounterAnimation(el) {
     if (el.dataset.animated === 'true') return;
     el.dataset.animated = 'true';
@@ -349,7 +306,39 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(updateCounter);
   }
 
-  // ─── 8. Mot-Clé Rotatif Dynamique (Hero) ─────────────────────────
+  // ─── 9. Intersection Observer & Scroll Animations ─────────────────
+  document.documentElement.classList.add('js-ready');
+
+  // Démarrage immédiat des compteurs du Hero
+  document.querySelectorAll('.hero-metrics-strip [data-counter]').forEach(cnt => {
+    startCounterAnimation(cnt);
+  });
+
+  const animatedElements = document.querySelectorAll('.animate-on-scroll');
+  if (animatedElements.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          const counters = entry.target.querySelectorAll('[data-counter]');
+          counters.forEach((cnt) => startCounterAnimation(cnt));
+
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px 100px 0px' });
+
+    animatedElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 150) {
+        el.classList.add('visible');
+      }
+      observer.observe(el);
+    });
+  }
+
+  // ─── 10. Mot-Clé Rotatif Dynamique (Hero) ────────────────────────
   const rotatorEl = document.getElementById('hero-rotator-word');
   const keywords = [
     'Réquisitions Judiciaires',
@@ -374,62 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2400);
   }
 
-  // ─── 9. Kinetic Scroll Word-by-Word Reveal ───────────────────────
-  const kineticWords = document.querySelectorAll('.kinetic-word');
-  const kineticSection = document.getElementById('kinetic-statement');
+  // ─── 11. Accordéon FAQ Géré Directement par Composant ────────────
 
-  function updateKineticScroll() {
-    if (!kineticSection || kineticWords.length === 0) return;
-
-    const rect = kineticSection.getBoundingClientRect();
-    const windowH = window.innerHeight;
-    const totalWords = kineticWords.length;
-
-    const scrollProgress = (windowH * 0.75 - rect.top) / (rect.height + windowH * 0.4);
-    const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
-    const activeWordCount = Math.floor(clampedProgress * totalWords);
-
-    kineticWords.forEach((word, idx) => {
-      if (idx <= activeWordCount) {
-        word.classList.add('active', 'lit');
-      } else {
-        word.classList.remove('active', 'lit');
-      }
-    });
-  }
-
-  // ─── 10. Accordéon FAQ Dynamique ──────────────────────────────────
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach((item) => {
-    const trigger = item.querySelector('.faq-question-btn') || item.querySelector('.faq-question-trigger');
-    const answer = item.querySelector('.faq-answer') || item.querySelector('.faq-answer-collapse');
-
-    if (trigger && answer) {
-      trigger.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-
-        // Fermer les autres items
-        faqItems.forEach(otherItem => {
-          if (otherItem !== item) {
-            otherItem.classList.remove('open');
-            const otherAnswer = otherItem.querySelector('.faq-answer') || otherItem.querySelector('.faq-answer-collapse');
-            if (otherAnswer) otherAnswer.style.maxHeight = null;
-          }
-        });
-
-        // Basculer l'item cliqué
-        if (!isOpen) {
-          item.classList.add('open');
-          answer.style.maxHeight = answer.scrollHeight + 24 + 'px';
-        } else {
-          item.classList.remove('open');
-          answer.style.maxHeight = null;
-        }
-      });
-    }
-  });
-
-  // ─── 11. Menu Mobile Plein Écran ──────────────────────────────────
+  // ─── 12. Menu Mobile Plein Écran ──────────────────────────────────
   const mobileToggle = document.getElementById('mobile-menu-toggle');
   const mobileClose = document.getElementById('mobile-menu-close');
   const mobileOverlay = document.getElementById('mobile-menu-overlay');
@@ -449,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
   mobileClose?.addEventListener('click', closeMobileMenu);
   mobileLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
 
-  // ─── 12. Smooth Scroll pour les Liens d'Ancre ────────────────────
+  // ─── 13. Défilement Fluide pour Liens d'Ancre ─────────────────────
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
@@ -459,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const headerOffset = 90;
         const elementPosition = target.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        const offsetPosition = elementPosition + (window.pageYOffset || document.documentElement.scrollTop) - headerOffset;
 
         window.scrollTo({
           top: offsetPosition,
@@ -468,5 +404,88 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ─── 14. Initialisation des Listes Déroulantes Sur-Mesure ──────────
+  function initCustomSelects() {
+    const selects = document.querySelectorAll('select.form-select');
+    selects.forEach((select) => {
+      if (select.dataset.customized === 'true') return;
+      select.dataset.customized = 'true';
+
+      select.style.display = 'none';
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'custom-select-wrapper';
+
+      const trigger = document.createElement('div');
+      trigger.className = 'custom-select-trigger';
+      trigger.tabIndex = 0;
+
+      const selectedOption = select.options[select.selectedIndex] || select.options[0];
+      const triggerText = document.createElement('span');
+      triggerText.className = 'custom-select-text';
+      triggerText.textContent = selectedOption ? selectedOption.text : 'Sélectionner...';
+
+      const arrow = document.createElement('div');
+      arrow.className = 'custom-select-arrow';
+      arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+
+      trigger.appendChild(triggerText);
+      trigger.appendChild(arrow);
+      wrapper.appendChild(trigger);
+
+      const dropdown = document.createElement('div');
+      dropdown.className = 'custom-select-dropdown';
+
+      Array.from(select.options).forEach((opt, idx) => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'custom-select-option' + (idx === select.selectedIndex ? ' selected' : '') + (opt.disabled ? ' disabled' : '');
+        optionEl.dataset.value = opt.value;
+        optionEl.innerHTML = `<span>${opt.text}</span>` + (idx === select.selectedIndex && opt.value !== '' ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '');
+
+        optionEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (opt.disabled) return;
+
+          select.value = opt.value;
+          triggerText.textContent = opt.text;
+
+          dropdown.querySelectorAll('.custom-select-option').forEach(el => el.classList.remove('selected'));
+          optionEl.classList.add('selected');
+
+          wrapper.classList.remove('open');
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        dropdown.appendChild(optionEl);
+      });
+
+      wrapper.appendChild(dropdown);
+      select.parentNode.insertBefore(wrapper, select.nextSibling);
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = wrapper.classList.contains('open');
+
+        document.querySelectorAll('.custom-select-wrapper.open').forEach(w => {
+          if (w !== wrapper) w.classList.remove('open');
+        });
+
+        wrapper.classList.toggle('open', !isOpen);
+      });
+    });
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.custom-select-wrapper.open').forEach(w => w.classList.remove('open'));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.custom-select-wrapper.open').forEach(w => w.classList.remove('open'));
+      }
+    });
+  }
+
+  initCustomSelects();
 
 });

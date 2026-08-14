@@ -9,9 +9,9 @@
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="apple-touch-icon" href="assets/logo.png">
 
-  <link rel="stylesheet" href="css/index.css?v=20260813_v4">
-  <link rel="stylesheet" href="css/components.css?v=20260813_v4">
-  <link rel="stylesheet" href="css/responsive.css?v=20260813_v4">
+  <link rel="stylesheet" href="css/index.css?v=20260814_v8">
+  <link rel="stylesheet" href="css/components.css?v=20260814_v8">
+  <link rel="stylesheet" href="css/responsive.css?v=20260814_v8">
 
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -27,7 +27,7 @@
   <header class="site-header" id="site-header">
     <div class="header-capsule">
       <a href="index.html" class="brand-logo" aria-label="LexaSafe Accueil">
-        <img src="assets/logo.png" alt="LexaSafe" class="brand-logo-img">
+        <img src="assets/logo.png?v=20260814_v5" alt="LexaSafe" class="brand-logo-img">
       </a>
 
       <div class="nav-actions">
@@ -199,13 +199,41 @@
         userEmailInput.value = 'dpo.martin@paytech.fr';
       });
 
-      btnNext.addEventListener('click', () => {
-        if (!userEmailInput.value) {
+      const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8000' : '';
+      let challengeId = null;
+
+      btnNext.addEventListener('click', async () => {
+        const email = userEmailInput.value.trim();
+        const password = document.getElementById('user-password').value;
+        if (!email) {
           alert('Veuillez saisir votre identifiant.');
           return;
         }
-        step1.style.display = 'none';
-        step2.style.display = 'block';
+
+        try {
+          btnNext.disabled = true;
+          btnNext.innerHTML = '<span>Vérification...</span>';
+          
+          if (API_BASE) {
+            const res = await fetch(`${API_BASE}/api/auth/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password, role: currentRole })
+            });
+            if (res.ok) {
+              const data = await res.json();
+              challengeId = data.challenge_id;
+            }
+          }
+        } catch (err) {
+          console.warn('API local offline, mode simulation actif:', err);
+        } finally {
+          btnNext.disabled = false;
+          btnNext.innerHTML = '<span>Étape Suivante : Validation A2F</span> <i data-lucide="arrow-right"></i>';
+          if (window.lucide) window.lucide.createIcons();
+          step1.style.display = 'none';
+          step2.style.display = 'block';
+        }
       });
 
       btnPrev.addEventListener('click', () => {
@@ -213,8 +241,30 @@
         step1.style.display = 'block';
       });
 
-      loginForm.addEventListener('submit', (e) => {
+      loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const otpCode = document.getElementById('a2f-code').value.trim() || '894201';
+        
+        try {
+          if (API_BASE) {
+            const res = await fetch(`${API_BASE}/api/auth/verify-2fa`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                challenge_id: challengeId || 'chl_direct',
+                totp_code: otpCode
+              })
+            });
+            if (res.ok) {
+              const data = await res.json();
+              localStorage.setItem('lexasafe_token', data.access_token);
+              localStorage.setItem('lexasafe_user', JSON.stringify(data.user));
+            }
+          }
+        } catch (err) {
+          console.warn('Mode local hors-ligne:', err);
+        }
+
         if (currentRole === 'opj') {
           window.location.href = 'dashboard.html';
         } else {
@@ -223,6 +273,6 @@
       });
     });
   </script>
-  <script src="js/app.js?v=20260813_v4"></script>
+  <script src="js/app.js?v=20260814_v8"></script>
 </body>
 </html>

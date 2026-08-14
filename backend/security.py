@@ -131,3 +131,64 @@ def validate_phone_number_e164(phone: str) -> bool:
         return True
     
     return False
+
+
+# 5. Tokens de Session Signés Souverains (JWT HS256)
+import json
+from config import settings
+
+def create_session_token(user_data: Dict[str, Any], expires_in_seconds: int = 86400) -> str:
+    """Génère un token de session signé HMAC-SHA256 sans dépendance tierce."""
+    header = {"alg": "HS256", "typ": "JWT"}
+    payload = {
+        **user_data,
+        "iat": int(time.time()),
+        "exp": int(time.time()) + expires_in_seconds
+    }
+    
+    b64_header = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip("=")
+    b64_payload = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip("=")
+    
+    signature = hmac.new(
+        settings.jwt_secret_key.encode(),
+        f"{b64_header}.{b64_payload}".encode(),
+        hashlib.sha256
+    ).digest()
+    b64_sig = base64.urlsafe_b64encode(signature).decode().rstrip("=")
+    
+    return f"{b64_header}.{b64_payload}.{b64_sig}"
+
+
+def verify_session_token(token: str) -> Optional[Dict[str, Any]]:
+    """Vérifie l'intégrité et l'expiration d'un token de session."""
+    try:
+        parts = token.split(".")
+        if len(parts) != 3:
+            return None
+        
+        b64_header, b64_payload, b64_sig = parts
+        
+        expected_sig = hmac.new(
+            settings.jwt_secret_key.encode(),
+            f"{b64_header}.{b64_payload}".encode(),
+            hashlib.sha256
+        ).digest()
+        
+        rem = len(b64_sig) % 4
+        padded_sig = b64_sig + ("=" * (4 - rem) if rem else "")
+        actual_sig = base64.urlsafe_b64decode(padded_sig)
+        
+        if not hmac.compare_digest(expected_sig, actual_sig):
+            return None
+        
+        rem_p = len(b64_payload) % 4
+        padded_payload = b64_payload + ("=" * (4 - rem_p) if rem_p else "")
+        payload = json.loads(base64.urlsafe_b64decode(padded_payload).decode())
+        
+        if payload.get("exp", 0) < time.time():
+            return None
+        
+        return payload
+    except Exception:
+        return None
+

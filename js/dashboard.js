@@ -286,20 +286,17 @@ function toggleRgpdRedaction(reqId) {
 
 function triggerZipDownload(reqId) {
   const item = REQUISITIONS_DATABASE.find(r => r.id === reqId);
-  const zipName = item?.extractedData?.zipName || `LexaSafe_Requisition_${reqId}.zip`;
+  const zipName = item?.extractedData?.zipName || `Requisition_${reqId}_Donnees_Scellees.zip`;
   
-  const sampleContent = `LEXASAFE FRANCE - BORDEREAU OFFICIEL DE REMISE JUDICIAIRE
-Article 60-1, 60-2 du Code de Procédure Pénale • Règlement e-Evidence (UE)
-ID Réquisition : ${reqId}
-Officier : ${item?.officer || 'Police Nationale'}
-Entité : ${item?.company || 'Entreprise Accréditée'}
-Empreinte SHA-256 : ${item?.extractedData?.sha256 || 'CERTIFIÉE_EIDAS_ANSSI'}
-Données : Logs IP, Métadonnées de connexion, Horodatage certifié RFC 3161.
-Statut : Scellé et remis sous chiffrement E2EE.`;
+  let zipUrl = 'assets/downloads/Requisition_99120_Donnees_Scellees_CloudHost.zip';
+  if (reqId === 'REQ-2026-99118' || (zipName && zipName.includes('PayTech'))) {
+    zipUrl = 'assets/downloads/Requisition_99118_Identite_Bancaire_PayTech.zip';
+  } else if (zipName && zipName.includes('CloudHost')) {
+    zipUrl = 'assets/downloads/Requisition_99120_Donnees_Scellees_CloudHost.zip';
+  }
 
-  const blob = new Blob([sampleContent], { type: 'application/zip' });
   const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
+  link.href = zipUrl;
   link.download = zipName;
   document.body.appendChild(link);
   link.click();
