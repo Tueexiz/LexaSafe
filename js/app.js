@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         this.vx = (Math.random() - 0.5) * 0.6;
         this.vy = (Math.random() - 0.5) * 0.6;
         this.radius = Math.random() * 2 + 1.2;
-        this.baseColor = Math.random() > 0.3 ? 'rgba(29, 78, 216, ' : 'rgba(5, 150, 105, ';
+        this.baseColor = Math.random() > 0.3 ? 'rgba(2, 89, 221, ' : 'rgba(5, 150, 105, ';
       }
 
       update() {
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(29, 78, 216, ${alpha})`;
+            ctx.strokeStyle = `rgba(2, 89, 221, ${alpha})`;
             ctx.lineWidth = 0.85;
             ctx.stroke();
           }
@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionEl = document.createElement('div');
         optionEl.className = 'custom-select-option' + (idx === select.selectedIndex ? ' selected' : '') + (opt.disabled ? ' disabled' : '');
         optionEl.dataset.value = opt.value;
-        optionEl.innerHTML = `<span>${opt.text}</span>` + (idx === select.selectedIndex && opt.value !== '' ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '');
+        optionEl.innerHTML = `<span>${opt.text}</span>` + (idx === select.selectedIndex && opt.value !== '' ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0259DD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : '');
 
         optionEl.addEventListener('click', (e) => {
           e.stopPropagation();

@@ -22,7 +22,7 @@ export function GlassCard({
     <div
       className={cn(
         "rounded-2xl border border-white/20 bg-white/60 backdrop-blur-xl",
-        "shadow-[0_8px_32px_rgba(29,78,216,0.08)]",
+        "shadow-[0_8px_32px_rgba(2,89,221,0.08)]",
         paddingMap[padding],
         className
       )}

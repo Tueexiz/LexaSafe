@@ -52,10 +52,10 @@ export function PricingSection() {
               ))}
             </ul>
             <Link
-              href="/demo"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-pill bg-crimson-threat py-3.5 font-bold text-white transition hover:bg-crimson-hover"
+              href="/inscription/entreprise"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-pill bg-blue-primary py-3.5 font-bold text-white transition hover:bg-blue-hover"
             >
-              Demander une démo
+              Demander un devis
               <ArrowRight className="h-4 w-4" />
             </Link>
           </GlassCard>

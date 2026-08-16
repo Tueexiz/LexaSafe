@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # Sécurité CORS & IP
     cors_origins: str = os.getenv("CORS_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080,http://localhost:3000,https://relationship-similar-sought-cure.trycloudflare.com,*")
     rate_limit_per_minute: int = 120
+
+    # Cache / rate-limit (Redis avec fallback in-memory automatique en dev)
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     
     # Répertoires de stockage
     upload_dir: str = os.getenv("UPLOAD_DIR", os.path.join(tempfile.gettempdir(), "lexasafe_uploads"))

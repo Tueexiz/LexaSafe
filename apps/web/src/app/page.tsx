@@ -1,24 +1,36 @@
 import dynamic from "next/dynamic";
-import { AmbientBackground } from "@lexasafe/ui";
 import { FadeUp } from "@lexasafe/motion";
 import faqData from "@/content/faq.json";
 import { WebHeader } from "@/components/WebHeader";
 import { HeroSection } from "@/components/HeroSection";
-import { WorkflowSection, AdvantagesSection } from "@/components/Sections";
-import { SiteFooter } from "@/components/SiteFooter";
+import { HeroTitle } from "@/components/HeroTitle";
+import { HomeShell } from "@/components/HomeShell";
+import { CreatorsSection } from "@/components/CreatorsSection";
+
+const WorkflowSection = dynamic(() =>
+  import("@/components/Sections").then((mod) => ({ default: mod.WorkflowSection }))
+);
+
+const AdvantagesSection = dynamic(() =>
+  import("@/components/Sections").then((mod) => ({ default: mod.AdvantagesSection }))
+);
 
 const DangersSection = dynamic(() =>
   import("@/components/DangersSection").then((mod) => ({ default: mod.DangersSection }))
 );
+
 const CalculatorSection = dynamic(() =>
   import("@/components/CalculatorSection").then((mod) => ({ default: mod.CalculatorSection }))
 );
+
 const PricingSection = dynamic(() =>
   import("@/components/PricingSection").then((mod) => ({ default: mod.PricingSection }))
 );
-const CreatorsSection = dynamic(() =>
-  import("@/components/CreatorsSection").then((mod) => ({ default: mod.CreatorsSection }))
+
+const SiteFooter = dynamic(() =>
+  import("@/components/SiteFooter").then((mod) => ({ default: mod.SiteFooter }))
 );
+
 const FAQAccordion = dynamic(() =>
   import("@lexasafe/ui").then((mod) => ({ default: mod.FAQAccordion }))
 );
@@ -35,15 +47,14 @@ export default function HomePage() {
   };
 
   return (
-    <>
+    <HomeShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <AmbientBackground />
       <WebHeader />
       <main className="relative z-10">
-        <HeroSection />
+        <HeroSection title={<HeroTitle />} />
         <WorkflowSection />
         <AdvantagesSection />
         <DangersSection />
@@ -67,6 +78,6 @@ export default function HomePage() {
         </section>
       </main>
       <SiteFooter />
-    </>
+    </HomeShell>
   );
 }

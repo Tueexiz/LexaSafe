@@ -1,0 +1,36 @@
+const LINES: { words: string[]; accent?: number }[] = [
+  { words: ["Sécurisez", "&"] },
+  { words: ["Automatisez"], accent: 0 },
+  { words: ["Vos", "Réquisitions"] },
+];
+
+export function HeroTitle() {
+  let wordIndex = 0;
+
+  return (
+    <h1
+      className="hero-title font-[family-name:var(--font-syne)] font-extrabold uppercase leading-[0.92] tracking-[-0.02em] text-blue-navy [font-size:clamp(2rem,6.5vw,5.5rem)]"
+      aria-label="Sécurisez et Automatisez Vos Réquisitions"
+    >
+      {LINES.map((line, lineIdx) => (
+        <span key={lineIdx} className="block">
+          {line.words.map((word, i) => {
+            const idx = wordIndex++;
+            const isAccent = line.accent === i;
+            return (
+              <span key={word} className="hero-title-mask inline-block overflow-hidden align-bottom">
+                <span
+                  className={`hero-title-word inline-block text-[length:inherit] leading-[inherit] ${isAccent ? "text-[#0259DD]" : ""}`}
+                  style={{ animationDelay: `${0.35 + idx * 0.075}s` }}
+                >
+                  {word}
+                  {i < line.words.length - 1 ? "\u00A0" : ""}
+                </span>
+              </span>
+            );
+          })}
+        </span>
+      ))}
+    </h1>
+  );
+}

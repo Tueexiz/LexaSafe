@@ -14,4 +14,6 @@ infra/secrets/
 *.key
 
 backend/data/opj_registration_requests/*.json
+backend/data/registration_requests/*.json
+*.tsbuildinfo
 

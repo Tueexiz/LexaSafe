@@ -134,7 +134,7 @@ function renderRequisitionTable() {
 
     return `
       <tr>
-        <td style="font-weight:700; color:#1d4ed8;">${row.id}</td>
+        <td style="font-weight:700; color:#0259DD;">${row.id}</td>
         <td>
           <div style="font-weight:600; color:#0f2b5c;">${row.officer}</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">${row.service}</div>
@@ -201,7 +201,7 @@ function openExtractionModal(reqId) {
       <div class="extraction-panel" style="background:#f8fafc; border:1px solid #e2e8f0;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
           <div style="font-weight:700; font-size:0.95rem; color:var(--blue-navy); display:flex; align-items:center; gap:0.5rem;">
-            <i data-lucide="binary" style="width:16px;height:16px;color:#1d4ed8;"></i>
+            <i data-lucide="binary" style="width:16px;height:16px;color:#0259DD;"></i>
             Données Utilisateur Extraites (Conformité e-Evidence & RGPD)
           </div>
           <div style="display:flex; gap:0.5rem;">
@@ -231,11 +231,11 @@ function openExtractionModal(reqId) {
           </div>
           <div class="extracted-field" style="background:#ffffff; border:1px solid #e2e8f0;">
             <div class="extracted-label">Email de Connexion</div>
-            <div class="extracted-val" style="color:#1d4ed8;">${displayEmail}</div>
+            <div class="extracted-val" style="color:#0259DD;">${displayEmail}</div>
           </div>
           <div class="extracted-field" style="background:#ffffff; border:1px solid #e2e8f0;">
             <div class="extracted-label">Téléphone Associé</div>
-            <div class="extracted-val" style="color:#1d4ed8;">${displayPhone}</div>
+            <div class="extracted-val" style="color:#0259DD;">${displayPhone}</div>
           </div>
           <div class="extracted-field" style="background:#ffffff; border:1px solid #e2e8f0;">
             <div class="extracted-label">Période d'Extraction</div>

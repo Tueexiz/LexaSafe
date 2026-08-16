@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Timer, Scale } from "lucide-react";
+import { Scale } from "lucide-react";
 import { AnimatedNumber, FadeUp } from "@lexasafe/motion";
 import { computeCalculator, formatEur } from "@/lib/calculator";
 
-const SLIDER_FILL = "#1d4ed8";
-const SLIDER_TRACK = "#e2e8f0";
+const SLIDER_FILL = "#0259DD";
+const SLIDER_TRACK = "#E8EDF5";
 
 function sliderFillStyle(value: number, min: number, max: number) {
   const percentage = ((value - min) / (max - min)) * 100;
@@ -16,7 +16,7 @@ function sliderFillStyle(value: number, min: number, max: number) {
 }
 
 const sliderClassName =
-  "h-2 w-full cursor-pointer appearance-none rounded-pill outline-none [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-blue-primary [&::-moz-range-thumb]:shadow-[0_2px_8px_rgba(29,78,216,0.4)] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-blue-primary [&::-webkit-slider-thumb]:shadow-[0_2px_8px_rgba(29,78,216,0.4)]";
+  "h-2 w-full cursor-pointer appearance-none rounded-pill outline-none [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-blue-primary [&::-moz-range-thumb]:shadow-[0_2px_8px_rgba(2,89,221,0.4)] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-blue-primary [&::-webkit-slider-thumb]:shadow-[0_2px_8px_rgba(2,89,221,0.4)]";
 
 export function CalculatorSection() {
   const [revenueM, setRevenueM] = useState(15);
@@ -92,33 +92,6 @@ export function CalculatorSection() {
                     className={sliderClassName}
                     aria-label="Volume réquisitions"
                   />
-                </div>
-                <div className="rounded-xl border border-border-subtle bg-bg-main p-5 text-sm text-text-secondary">
-                  <div className="mb-3 flex items-center gap-2 font-bold text-blue-navy">
-                    <Timer className="h-4 w-4 text-blue-primary" />
-                    Délais d&apos;instruction (sources légales)
-                  </div>
-                  <div className="space-y-2 border-b border-dashed border-border-subtle pb-3">
-                    <div className="flex justify-between gap-4">
-                      <span>Urgences e-Evidence (8 h max)</span>
-                      <span>
-                        <span className="text-text-muted line-through">{result.urgentManualLabel}</span>
-                        {" → "}
-                        <strong className="text-emerald-valid">{result.urgentLexaSafeLabel}</strong>
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span>Dossiers complexes (~2 sem. manuel)</span>
-                      <span>
-                        <span className="text-text-muted line-through">{result.complexManualLabel}</span>
-                        {" → "}
-                        <strong className="text-emerald-valid">{result.complexLexaSafeLabel}</strong>
-                      </span>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-xs leading-relaxed text-text-muted">
-                    Économie moyenne : 4,5 h → 34 min par réquisition standard (juriste/DPO @ 85 €/h chargé).
-                  </p>
                 </div>
               </div>
 

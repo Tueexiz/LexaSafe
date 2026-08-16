@@ -69,8 +69,8 @@ export function WebHeader() {
               <Lock className="h-4 w-4" />
               Connexion Portail
             </a>
-            <Link href="/demo" className="rounded-lg border border-white/30 py-3 text-center">
-              Demander une démo
+            <Link href="/acces" className="rounded-lg border border-white/30 py-3 text-center">
+              Créer un compte / Devis
             </Link>
           </div>
         </div>

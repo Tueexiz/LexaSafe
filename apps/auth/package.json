@@ -10,8 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.1.1",
-    "@fontsource/syne": "^5.1.1",
     "@lexasafe/motion": "*",
     "@lexasafe/ui": "*",
     "lucide-react": "^0.469.0",

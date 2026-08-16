@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --font-display: "Clash Display", sans-serif;
+    --font-body: "General Sans", system-ui, sans-serif;
+  }
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
@@ -10,9 +14,23 @@
   }
 
   body {
-    @apply min-h-screen overflow-x-hidden bg-bg-main font-body text-text-main;
-    background: linear-gradient(160deg, #f8fafc 0%, #eff6ff 40%, #dbeafe 100%);
-    background-attachment: fixed;
+    @apply min-h-screen overflow-x-hidden bg-[#FBF8F4] font-body text-text-main;
+  }
+
+  html.custom-cursor-active,
+  html.custom-cursor-active body,
+  html.custom-cursor-active a,
+  html.custom-cursor-active button {
+    cursor: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.custom-cursor-active,
+    html.custom-cursor-active body,
+    html.custom-cursor-active a,
+    html.custom-cursor-active button {
+      cursor: auto !important;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -26,9 +44,9 @@
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-syne), sans-serif;
+    font-family: var(--font-display);
   }
   .font-body {
-    font-family: var(--font-inter), system-ui, sans-serif;
+    font-family: var(--font-body);
   }
 }

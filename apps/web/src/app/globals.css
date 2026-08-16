@@ -1,3 +1,64 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes hero-title-word-in {
+  from {
+    transform: translateY(110%) rotate(1.5deg);
+  }
+  to {
+    transform: translateY(0) rotate(0);
+  }
+}
+
+/* Default: fully visible (safe if animation CSS is cached/stale) */
+.hero-title-word {
+  display: inline-block;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-title-word {
+    animation: hero-title-word-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title-word {
+    animation: none;
+    transform: none;
+  }
+}
+
+.prose-legal h2 {
+  @apply mb-3 mt-8 font-display text-xl font-bold text-blue-navy first:mt-0;
+}
+
+.prose-legal p {
+  @apply mb-4 text-sm leading-relaxed text-text-secondary last:mb-0;
+}
+
+.prose-legal a {
+  @apply font-semibold text-blue-primary hover:underline;
+}
+
+.prose-legal strong {
+  @apply font-semibold text-blue-navy;
+}
+
+.prose-legal code {
+  @apply rounded bg-bg-subtle px-1.5 py-0.5 font-mono text-xs text-blue-navy;
+}
+
+.prose-legal table {
+  @apply mb-4 w-full text-sm;
+}
+
+.prose-legal th {
+  @apply border-b border-border-subtle pb-2 text-left font-bold text-blue-navy;
+}
+
+.prose-legal td {
+  @apply border-b border-dashed border-border-subtle py-2 text-text-secondary;
+}

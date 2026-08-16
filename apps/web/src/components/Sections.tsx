@@ -1,62 +1,77 @@
-import { EyeOff, Flag, Scale, ShieldCheck } from "lucide-react";
-import { FadeUp } from "@lexasafe/motion";
-import { GlassCard } from "@lexasafe/ui";
+"use client";
 
-const features = [
-  {
-    icon: Flag,
-    title: "100% Souverain • OVHcloud",
-    text: "Hébergé sur serveurs français qualifiés SecNumCloud ANSSI. Immunité totale face au CLOUD Act.",
-    color: "bg-bg-blue-tint text-blue-primary",
-  },
-  {
-    icon: Scale,
-    title: "Conforme Loi e-Evidence",
-    text: "Nativement taillé pour le Règlement Européen e-Evidence et CPP Art. 60-1 / 60-2.",
-    color: "bg-emerald-bg text-emerald-valid",
-  },
-  {
-    icon: EyeOff,
-    title: "Zéro Connaissance",
-    text: "Nous ne savons pas ce qui transite. Chiffrement E2EE de bout en bout.",
-    color: "bg-bg-blue-tint text-blue-primary",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Multi-Audité & Sécurité",
-    text: "Scellement SHA-256 eIDAS, journal d'audit infalsifiable, protection anti-usurpation.",
-    color: "bg-emerald-bg text-emerald-valid",
-  },
-];
+import { ShieldCheck, Landmark, Scale } from "lucide-react";
+import { FadeUp, TiltGlassCard, TiltCardItem } from "@lexasafe/motion";
 
 export function AdvantagesSection() {
   return (
-    <section className="border-t border-border-subtle bg-white py-24" id="avantages">
+    <section className="border-t border-border-subtle bg-gradient-to-b from-[#FBF8F4] via-white to-[#F5F9FF] py-28" id="avantages">
       <div className="container mx-auto max-w-6xl px-6">
         <FadeUp>
-          <div className="mx-auto mb-16 max-w-3xl text-center">
-            <span className="mb-5 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
-              Souveraineté Française
+          <div className="mx-auto mb-20 max-w-3xl text-center">
+            <span className="mb-6 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
+              Enterprise-Grade
             </span>
-            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-4xl">
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-blue-navy md:text-6xl">
               Pourquoi Choisir LexaSafe ?
             </h2>
           </div>
         </FadeUp>
-        <div className="grid gap-6 md:grid-cols-2">
-          {features.map((f, i) => (
-            <FadeUp key={f.title} index={i}>
-              <GlassCard className="h-full">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.color}`}>
-                    <f.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-display text-lg font-bold text-blue-navy">{f.title}</h3>
-                </div>
-                <p className="text-sm text-text-secondary">{f.text}</p>
-              </GlassCard>
-            </FadeUp>
-          ))}
+
+        <div className="grid gap-6 md:auto-rows-fr md:grid-cols-3 md:items-stretch">
+          <TiltGlassCard index={0}>
+            <div className="flex flex-col gap-4">
+              <TiltCardItem>
+                <ShieldCheck className="h-14 w-14 text-blue-primary" strokeWidth={1.5} />
+              </TiltCardItem>
+              <TiltCardItem>
+                <h3 className="font-display text-2xl font-extrabold tracking-tight text-blue-navy">
+                  Sécurité inviolable
+                </h3>
+              </TiltCardItem>
+              <TiltCardItem>
+                <p className="text-sm leading-relaxed text-text-secondary">
+                  Chiffrement E2EE Zéro Connaissance et scellement eIDAS SHA-256.
+                </p>
+              </TiltCardItem>
+            </div>
+          </TiltGlassCard>
+
+          <TiltGlassCard index={1}>
+            <div className="flex flex-col gap-4">
+              <TiltCardItem>
+                <Landmark className="h-14 w-14 text-blue-accent" strokeWidth={1.5} />
+              </TiltCardItem>
+              <TiltCardItem>
+                <h3 className="font-display text-2xl font-extrabold tracking-tight text-blue-navy">
+                  100% Souverain
+                </h3>
+              </TiltCardItem>
+              <TiltCardItem>
+                <p className="text-sm leading-relaxed text-text-secondary">
+                  Hébergé OVHcloud SecNumCloud, immunité au CLOUD Act.
+                </p>
+              </TiltCardItem>
+            </div>
+          </TiltGlassCard>
+
+          <TiltGlassCard index={2}>
+            <div className="flex flex-col gap-4">
+              <TiltCardItem>
+                <Scale className="h-14 w-14 text-crimson-threat" strokeWidth={1.5} />
+              </TiltCardItem>
+              <TiltCardItem>
+                <h3 className="font-display text-2xl font-extrabold tracking-tight text-blue-navy">
+                  Amendes RGPD évitées
+                </h3>
+              </TiltCardItem>
+              <TiltCardItem>
+                <p className="text-sm leading-relaxed text-text-secondary">
+                  Conformité e-Evidence et CPP Art. 60-1 garantie.
+                </p>
+              </TiltCardItem>
+            </div>
+          </TiltGlassCard>
         </div>
       </div>
     </section>
@@ -69,7 +84,7 @@ export function WorkflowSection() {
       n: 1,
       title: "Dépôt Sécurisé par l'OPJ",
       text: "L'Officier dépose sa réquisition officielle sur le portail sécurisé LexaSafe (gratuit pour les forces de l'ordre).",
-      badgeClass: "bg-[#1d4ed8] text-white border-[#1d4ed8]",
+      badgeClass: "bg-blue-primary text-white border-blue-primary",
     },
     {
       n: 2,
@@ -81,36 +96,40 @@ export function WorkflowSection() {
       n: 3,
       title: "Remise Chiffrée & Scellée",
       text: "Votre entreprise génère l'archive .ZIP scellée eIDAS en 1 clic avec horodatage probatoire.",
-      badgeClass: "bg-[#dc2626] text-white border-[#dc2626]",
+      badgeClass: "bg-crimson-threat text-white border-crimson-threat",
     },
   ];
 
   return (
-    <section className="border-t border-border-subtle bg-bg-subtle py-24" id="workflow">
+    <section className="border-t border-border-subtle bg-white/60 py-24 backdrop-blur-sm" id="workflow">
       <div className="container mx-auto max-w-6xl px-6">
         <FadeUp>
           <div className="mx-auto mb-16 max-w-3xl text-center">
             <span className="mb-5 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
               Canaux Sécurisés
             </span>
-            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-4xl">
+            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-5xl">
               Comment Fonctionne LexaSafe en 3 Étapes
             </h2>
           </div>
         </FadeUp>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {steps.map((s, i) => (
-            <FadeUp key={s.n} index={i}>
-              <GlassCard className="h-full min-h-[220px]">
+            <TiltGlassCard key={s.n} index={i}>
+              <TiltCardItem>
                 <div
                   className={`mb-5 flex h-12 w-12 items-center justify-center rounded-lg text-lg font-extrabold ${s.badgeClass}`}
                 >
                   {s.n}
                 </div>
+              </TiltCardItem>
+              <TiltCardItem>
                 <h3 className="font-display text-lg font-bold text-blue-navy">{s.title}</h3>
+              </TiltCardItem>
+              <TiltCardItem>
                 <p className="mt-3 text-sm leading-relaxed text-text-secondary">{s.text}</p>
-              </GlassCard>
-            </FadeUp>
+              </TiltCardItem>
+            </TiltGlassCard>
           ))}
         </div>
       </div>

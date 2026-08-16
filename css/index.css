@@ -7,55 +7,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@500;600;700;800&display=swap');
 
 :root {
-  /* Surfaces & Fonds (Dégradé Blanc Cassé & Bleu Clair Luminous) */
-  --bg-main: #f8fafc;
+  /* Surfaces & Fonds */
+  --bg-main: #FBF8F4;
   --bg-surface: #ffffff;
-  --bg-subtle: #f0f6ff;
-  --bg-neutral-light: #e6f0fc;
-  --bg-ice-gradient: linear-gradient(160deg, #f8fafc 0%, #edf4fc 35%, #dbeafe 100%);
+  --bg-subtle: #FBF8F4;
+  --bg-neutral-light: #CBDAF7;
+  --bg-ice-gradient: linear-gradient(160deg, #FBF8F4 0%, #F3F6FD 35%, #CBDAF7 100%);
   --bg-capsule: rgba(255, 255, 255, 0.92);
   --bg-capsule-scrolled: rgba(255, 255, 255, 0.98);
-  --bg-blue-tint: #eff6ff;
-  --bg-blue-soft: #dbeafe;
+  --bg-blue-tint: #F3F6FD;
+  --bg-blue-soft: #CBDAF7;
   --bg-dark-card: #0a0d12;
 
   /* Palette de Couleurs & Bleus Souverains */
   --blue-france: #002654;
-  --blue-navy: #0a192f;
-  --blue-primary: #1d4ed8;
-  --blue-hover: #1e40af;
-  --blue-accent: #2563eb;
-  --blue-electric: #0284c7;
-  --blue-border: #bfdbfe;
-  --blue-glow: rgba(29, 78, 216, 0.28);
+  --blue-navy: #0A2540;
+  --blue-primary: #0259DD;
+  --blue-hover: #0247B0;
+  --blue-accent: #84AFFB;
+  --blue-electric: #84AFFB;
+  --blue-border: #B9D0FF;
+  --blue-glow: rgba(2, 89, 221, 0.28);
 
   /* Statuts de Confiance & Validations */
-  --emerald-valid: #059669;
-  --emerald-bg: #ecfdf5;
-  --emerald-border: #a7f3d0;
-  --emerald-text: #065f46;
+  --emerald-valid: #0259DD;
+  --emerald-bg: #F3F6FD;
+  --emerald-border: #B9D0FF;
+  --emerald-text: #0247B0;
 
   /* Alertes & Dangers Évités */
-  --amber-alert: #d97706;
-  --amber-bg: #fffbeb;
-  --amber-border: #fde68a;
+  --amber-alert: #D91A2A;
+  --amber-bg: #FAE8EA;
+  --amber-border: #F0B8BE;
 
-  --crimson-threat: #dc2626;
-  --crimson-bg: #fef2f2;
-  --crimson-border: #fecaca;
-  --crimson-hover: #b91c1c;
+  --crimson-threat: #D91A2A;
+  --crimson-bg: #FAE8EA;
+  --crimson-border: #F0B8BE;
+  --crimson-hover: #B81524;
 
   /* Typographie & Lisibilité */
-  --text-main: #0a192f;
+  --text-main: #0A2540;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --text-white: #ffffff;
   --text-dark: #0a0d12;
 
   /* Bordures Nettes & Chirurgicales */
-  --border-subtle: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-active: #93c5fd;
+  --border-subtle: #E8EDF5;
+  --border-medium: #C5D8FC;
+  --border-active: #84AFFB;
   --border-dark: #27272a;
 
   /* Rayons d'angle (Border Radius) */
@@ -70,9 +70,9 @@
   --shadow-xs: 0 1px 2px rgba(10, 25, 47, 0.04);
   --shadow-sm: 0 2px 4px rgba(10, 25, 47, 0.05);
   --shadow-card: 0 10px 30px -5px rgba(10, 25, 47, 0.06), 0 2px 8px -2px rgba(10, 25, 47, 0.03);
-  --shadow-card-hover: 0 20px 40px -8px rgba(29, 78, 216, 0.12), 0 4px 12px -2px rgba(29, 78, 216, 0.05);
+  --shadow-card-hover: 0 20px 40px -8px rgba(2, 89, 221, 0.12), 0 4px 12px -2px rgba(2, 89, 221, 0.05);
   --shadow-capsule: 0 8px 32px rgba(10, 25, 47, 0.08), 0 2px 6px rgba(10, 25, 47, 0.04);
-  --shadow-glow: 0 0 40px rgba(29, 78, 216, 0.22);
+  --shadow-glow: 0 0 40px rgba(2, 89, 221, 0.22);
   --shadow-danger: 0 12px 28px -4px rgba(220, 38, 38, 0.14);
 
   /* Typographies */
@@ -290,13 +290,13 @@ a:hover {
 .btn-primary {
   background: var(--blue-primary);
   color: #ffffff;
-  box-shadow: 0 4px 18px rgba(29, 78, 216, 0.28);
+  box-shadow: 0 4px 18px rgba(2, 89, 221, 0.28);
 }
 .btn-primary:hover {
   background: var(--blue-hover);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.38);
+  box-shadow: 0 8px 24px rgba(2, 89, 221, 0.38);
 }
 .btn-primary:active {
   transform: translateY(0);

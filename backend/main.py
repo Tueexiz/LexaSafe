@@ -20,6 +20,8 @@ from routes.costs import router as costs_router
 from routes.opj import router as opj_router
 from routes.transparency import router as transparency_router
 from routes.admin import router as admin_router
+from routes.registration import router as registration_router
+from routes.demo import router as demo_router
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -87,13 +89,15 @@ app.add_middleware(
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(AuditMiddleware)
 
-# Montage de l'ensemble des modules métier
+# Montage de l'ensemble des modules métier (inscriptions + démo inclus)
 app.include_router(auth_router)
 app.include_router(requisitions_router)
 app.include_router(costs_router)
 app.include_router(opj_router)
 app.include_router(transparency_router)
 app.include_router(admin_router)
+app.include_router(registration_router)
+app.include_router(demo_router)
 
 
 @app.get("/")

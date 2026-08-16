@@ -113,6 +113,43 @@ def validate_opj_professional_email(email: str) -> bool:
     return domain.endswith(".gouv.fr")
 
 
+def validate_professional_email(email: str) -> bool:
+    """Accepte toute adresse professionnelle et rejette les fournisseurs grand public."""
+    normalized = email.strip().lower()
+    if "@" not in normalized:
+        return False
+    domain = normalized.rsplit("@", 1)[1]
+    if domain in FREE_EMAIL_DOMAINS:
+        return False
+    return "." in domain and len(domain) >= 4
+
+
+def _luhn_valid(number: str) -> bool:
+    """Contrôle de Luhn (utilisé pour SIREN/SIRET)."""
+    total = 0
+    for i, ch in enumerate(reversed(number)):
+        d = ord(ch) - 48
+        if d < 0 or d > 9:
+            return False
+        if i % 2 == 1:
+            d *= 2
+            if d > 9:
+                d -= 9
+        total += d
+    return total % 10 == 0
+
+
+def validate_siren_siret(value: str) -> bool:
+    """Valide un SIREN (9 chiffres) ou SIRET (14 chiffres) via l'algorithme de Luhn."""
+    clean = "".join(c for c in value if c.isdigit())
+    if len(clean) not in (9, 14):
+        return False
+    # Cas particulier légal : La Poste (SIREN 356000000) échoue au test de Luhn.
+    if clean.startswith("356000000"):
+        return True
+    return _luhn_valid(clean)
+
+
 def validate_phone_number_e164(phone: str) -> bool:
     """
     Vérifie la conformité E.164 française (+33) et rejette les numéros VoIP / virtuels.

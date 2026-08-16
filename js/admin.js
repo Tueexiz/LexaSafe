@@ -138,7 +138,7 @@ function renderAllAdminTables() {
   const edrTbody = document.getElementById('admin-edr-tbody');
   if (edrTbody) {
     edrTbody.innerHTML = EDR_THREAT_EVENTS.map(evt => {
-      let badgeStyle = "background:#fef2f2; color:#dc2626; border-color:#fecaca;";
+      let badgeStyle = "background:#fef2f2; color:#D91A2A; border-color:#fecaca;";
       if (evt.status === 'quarantine') badgeStyle = "background:#fffbeb; color:#d97706; border-color:#fde68a;";
 
       return `
@@ -154,7 +154,7 @@ function renderAllAdminTables() {
           </td>
           <td>
             <div style="font-size:0.8rem; font-weight:700; color:#0f172a;">${evt.timestamp}</div>
-            <div style="font-size:0.75rem; color:#1d4ed8; font-weight:600;">Volume : ${evt.packets}</div>
+            <div style="font-size:0.75rem; color:#0259DD; font-weight:600;">Volume : ${evt.packets}</div>
           </td>
           <td>
             <div style="font-size:0.72rem; font-family:monospace; background:#eff6ff; color:#1e40af; padding:0.25rem 0.45rem; border-radius:4px; border:1px solid #bfdbfe;">
@@ -168,7 +168,7 @@ function renderAllAdminTables() {
           </td>
           <td>
             <div style="display:flex; gap:0.4rem;">
-              <button class="btn btn-secondary btn-sm" onclick="banIp('${evt.ip}')" style="padding:0.3rem 0.6rem; font-size:0.75rem; color:#dc2626; border-color:#fecaca;">
+              <button class="btn btn-secondary btn-sm" onclick="banIp('${evt.ip}')" style="padding:0.3rem 0.6rem; font-size:0.75rem; color:#D91A2A; border-color:#fecaca;">
                 Bannir IP
               </button>
               <button class="btn btn-secondary btn-sm" onclick="sendPharosAlert('${evt.id}')" style="padding:0.3rem 0.6rem; font-size:0.75rem;">
@@ -195,14 +195,14 @@ function renderAllAdminTables() {
             <div style="font-weight:700; color:#0f2b5c;">${opj.name}</div>
             <div style="font-size:0.75rem; color:var(--text-muted);">${opj.service}</div>
           </td>
-          <td style="color:#1d4ed8; font-weight:600; font-size:0.85rem;">${opj.email}</td>
+          <td style="color:#0259DD; font-weight:600; font-size:0.85rem;">${opj.email}</td>
           <td><span class="trust-pill" style="font-size:0.75rem; padding:0.2rem 0.5rem; background:#eff6ff; color:#1e40af; border-color:#bfdbfe;">${opj.matricule}</span></td>
           <td>
             <div style="font-size:0.8rem; font-weight:600; color:#334155;">${opj.createdBy}</div>
             <div style="font-size:0.72rem; color:var(--text-muted);">${opj.createdAt}</div>
           </td>
           <td>
-            <div style="font-size:0.78rem; font-weight:600; color:${opj.status === 'blocked' ? '#dc2626' : '#059669'};">
+            <div style="font-size:0.78rem; font-weight:600; color:${opj.status === 'blocked' ? '#D91A2A' : '#059669'};">
               ${opj.certificate}
             </div>
           </td>
@@ -219,12 +219,12 @@ function renderAllAdminTables() {
                 </button>
               ` : ''}
               ${opj.status === 'active' ? `
-                <button class="btn btn-secondary btn-sm" onclick="revokeOpjAccount('${opj.id}')" style="padding:0.3rem 0.6rem; font-size:0.75rem; color:#dc2626; border-color:#fecaca;">
+                <button class="btn btn-secondary btn-sm" onclick="revokeOpjAccount('${opj.id}')" style="padding:0.3rem 0.6rem; font-size:0.75rem; color:#D91A2A; border-color:#fecaca;">
                   Suspendre
                 </button>
               ` : ''}
               ${opj.status === 'blocked' ? `
-                <span style="font-size:0.75rem; color:#dc2626; font-weight:700;">Dossier Transmis Parquet</span>
+                <span style="font-size:0.75rem; color:#D91A2A; font-weight:700;">Dossier Transmis Parquet</span>
               ` : ''}
             </div>
           </td>
@@ -241,7 +241,7 @@ function renderAllAdminTables() {
         <td style="font-weight:700; color:#0f2b5c;">${org.name}</td>
         <td><span class="hash-badge" style="background:#f1f5f9;">${org.siren}</span></td>
         <td>${org.type}</td>
-        <td style="color:#1d4ed8; font-weight:600;">${org.dpo}</td>
+        <td style="color:#0259DD; font-weight:600;">${org.dpo}</td>
         <td style="font-weight:700;">${org.reqCount}</td>
         <td>
           <span class="status-tag ${org.status === 'active' ? 'status-sealed' : 'status-pending'}">
@@ -273,7 +273,7 @@ function renderAllAdminTables() {
         </td>
         <td>
           ${p.status === 'scheduled' ? `
-            <button class="btn btn-secondary btn-sm" onclick="forcePurgeItem('${p.id}')" style="color:#dc2626; border-color:#fecaca;">
+            <button class="btn btn-secondary btn-sm" onclick="forcePurgeItem('${p.id}')" style="color:#D91A2A; border-color:#fecaca;">
               Purger Immédiatement
             </button>
           ` : '<span style="color:#059669; font-size:0.8rem; font-weight:600;">Attestation RGPD Prête</span>'}

@@ -144,7 +144,7 @@ function renderEnterpriseTable() {
 
     return `
       <tr>
-        <td style="font-weight:700; color:#1d4ed8;">${row.id}</td>
+        <td style="font-weight:700; color:#0259DD;">${row.id}</td>
         <td>
           <div style="font-weight:600; color:#0f2b5c;">${row.officer}</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">${row.service}</div>
@@ -162,7 +162,7 @@ function renderEnterpriseTable() {
               ${row.verificationBadge}
             </span>
           ` : `
-            <span class="trust-pill" style="font-size:0.72rem; padding:0.25rem 0.55rem; background:#fef2f2; color:#dc2626; border-color:#fecaca;">
+            <span class="trust-pill" style="font-size:0.72rem; padding:0.25rem 0.55rem; background:#fef2f2; color:#D91A2A; border-color:#fecaca;">
               <i data-lucide="shield-x" style="width:12px;height:12px;"></i>
               ${row.verificationBadge}
             </span>
@@ -186,7 +186,7 @@ function renderEnterpriseTable() {
               <span>Bordereau</span>
             </button>
           ` : `
-            <button class="btn btn-secondary btn-sm" onclick="alert('Dossier d\'usurpation neutralisé transmis aux services de la gendarmerie pour enquête.')" style="padding:0.4rem 0.9rem; font-size:0.78rem; color:#dc2626;">
+            <button class="btn btn-secondary btn-sm" onclick="alert('Dossier d\'usurpation neutralisé transmis aux services de la gendarmerie pour enquête.')" style="padding:0.4rem 0.9rem; font-size:0.78rem; color:#D91A2A;">
               <i data-lucide="info" style="width:13px;height:13px;"></i>
               <span>Rapport EDR</span>
             </button>
@@ -225,7 +225,7 @@ function openEnterpriseModal(reqId) {
     <!-- Périmètre demandé par l'officier -->
     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:1.25rem; margin-bottom:1.25rem;">
       <div style="font-weight:700; color:var(--blue-navy); font-size:0.925rem; margin-bottom:0.35rem; display:flex; align-items:center; gap:0.4rem;">
-        <i data-lucide="file-search" style="width:16px;height:16px;color:#1d4ed8;"></i>
+        <i data-lucide="file-search" style="width:16px;height:16px;color:#0259DD;"></i>
         Périmètre Légal Exigé par l'Officier :
       </div>
       <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">
@@ -255,15 +255,15 @@ function openEnterpriseModal(reqId) {
           </div>
           <div class="extracted-field" style="background:#f8fafc; border:1px solid #e2e8f0;">
             <div class="extracted-label">IP &amp; FAI</div>
-            <div class="extracted-val" style="color:#1d4ed8;">${data.userIP}</div>
+            <div class="extracted-val" style="color:#0259DD;">${data.userIP}</div>
           </div>
           <div class="extracted-field" style="background:#f8fafc; border:1px solid #e2e8f0;">
             <div class="extracted-label">Email Client</div>
-            <div class="extracted-val" style="color:#1d4ed8;">${isRgpdRedacted ? 'c•••••••92@proton.me [CAVIARDÉ]' : data.email}</div>
+            <div class="extracted-val" style="color:#0259DD;">${isRgpdRedacted ? 'c•••••••92@proton.me [CAVIARDÉ]' : data.email}</div>
           </div>
           <div class="extracted-field" style="background:#f8fafc; border:1px solid #e2e8f0;">
             <div class="extracted-label">Téléphone Associé</div>
-            <div class="extracted-val" style="color:#1d4ed8;">${isRgpdRedacted ? '+33 6 •• •• 49 01 [CAVIARDÉ]' : data.phone}</div>
+            <div class="extracted-val" style="color:#0259DD;">${isRgpdRedacted ? '+33 6 •• •• 49 01 [CAVIARDÉ]' : data.phone}</div>
           </div>
         </div>
 
@@ -311,7 +311,7 @@ function toggleDemoRedaction() {
     btn.innerHTML = '<i data-lucide="eye"></i> <span>Désactiver Caviardage</span>';
   } else {
     el.textContent = '3 comptes conjoints et 4 contacts secondaires exposés';
-    el.style.color = '#dc2626';
+    el.style.color = '#D91A2A';
     btn.innerHTML = '<i data-lucide="eye-off"></i> <span>Activer Caviardage RGPD</span>';
   }
   if (window.lucide) window.lucide.createIcons();

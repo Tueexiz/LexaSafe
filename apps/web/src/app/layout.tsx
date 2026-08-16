@@ -1,25 +1,25 @@
-import { Inter, Syne } from "next/font/google";
+import type { Metadata } from "next";
 import "@lexasafe/ui/styles.css";
 import "./globals.css";
+import { clashDisplay, generalSans, syne } from "@/lib/fonts";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-syne",
-  display: "swap",
-});
-
-export const metadata = {
-  title: "LexaSafe | Passerelle Souveraine de Réquisitions Judiciaires",
+export const metadata: Metadata = {
+  metadataBase: new URL("https://lexasafe.fr"),
+  title: {
+    default: "LexaSafe | Passerelle Souveraine de Réquisitions Judiciaires",
+    template: "%s | LexaSafe France",
+  },
   description:
-    "Standard souverain français de traitement des réquisitions judiciaires. Bloquez les faux policiers, évitez les amendes de 2% du CA et respectez les délais d'urgence de la loi e-Evidence.",
+    "Standard souverain français de traitement des réquisitions judiciaires. Bloquez les fraudes, évitez les amendes RGPD et respectez les délais e-Evidence.",
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    siteName: "LexaSafe France",
+    title: "LexaSafe | Passerelle Souveraine de Réquisitions Judiciaires",
+    description:
+      "Sécurisez et automatisez vos réquisitions judiciaires. 100% souverain, hébergé OVHcloud SecNumCloud.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <body className={`${inter.variable} ${syne.variable} font-body antialiased`}>
+    <html lang="fr" className={syne.variable}>
+      <body className={`${clashDisplay.variable} ${generalSans.variable} font-body antialiased`}>
         {children}
       </body>
     </html>

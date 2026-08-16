@@ -30,9 +30,9 @@ export default function NotFound() {
             <Home className="h-4 w-4" />
             Portail Principal
           </Link>
-          <Link href="/demo" className="inline-flex items-center gap-2 rounded-pill border border-border-medium bg-white px-6 py-3 font-semibold text-blue-navy">
+          <Link href="/acces" className="inline-flex items-center gap-2 rounded-pill border border-border-medium bg-white px-6 py-3 font-semibold text-blue-navy">
             <Send className="h-4 w-4" />
-            Faire une Demande
+            Créer un compte / Devis
           </Link>
         </div>
       </main>

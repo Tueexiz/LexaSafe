@@ -108,7 +108,7 @@ export function Button({
 }) {
   const variants = {
     primary:
-      "bg-blue-primary text-white shadow-[0_4px_18px_rgba(29,78,216,0.28)] hover:bg-blue-hover hover:-translate-y-0.5",
+      "bg-blue-primary text-white shadow-[0_4px_18px_rgba(2,89,221,0.28)] hover:bg-blue-hover hover:-translate-y-0.5",
     secondary:
       "bg-white text-blue-navy border border-border-medium hover:border-blue-primary hover:text-blue-primary hover:-translate-y-0.5",
     danger:

@@ -155,4 +155,10 @@ export function AnimatedNumber({
   );
 }
 
+export { CustomCursor } from "./CustomCursor";
+export { SmoothScroll } from "./SmoothScroll";
+export { TextReveal, TextRevealBlock, HeroTitleReveal } from "./TextReveal";
+export { ShineMagneticButton } from "./ShineMagneticButton";
+export { TiltGlassCard, TiltCardItem } from "./TiltGlassCard";
+export { useMediaCapabilities } from "./useMediaCapabilities";
 export { motion, AnimatePresence } from "framer-motion";
