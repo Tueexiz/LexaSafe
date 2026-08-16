@@ -34,7 +34,7 @@ export function SiteHeader({
     >
       <div
         className={cn(
-          "pointer-events-auto relative flex items-center gap-6 rounded-pill border border-white/30",
+          "pointer-events-auto relative flex items-center gap-8 rounded-pill border border-white/30",
           "bg-white/90 px-5 py-2.5 shadow-capsule backdrop-blur-xl transition-all duration-300",
           scrolled && "bg-white/98 shadow-card"
         )}

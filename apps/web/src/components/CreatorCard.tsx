@@ -1,126 +1,78 @@
-"use client";
-
-import Image from "next/image";
-import { useState } from "react";
-import { Linkedin, ArrowUpRight } from "lucide-react";
-import { motion } from "@lexasafe/motion";
-import { FlagFR } from "@lexasafe/ui";
+import { Linkedin, Globe } from "lucide-react";
 import type { Creator } from "@/content/creators";
 
 export type { Creator };
 
-export function CreatorPortrait({
-  creator,
-  size = "lg",
+function SocialLink({
+  href,
+  label,
+  children,
 }: {
-  creator: Creator;
-  size?: "md" | "lg" | "xl";
+  href: string;
+  label: string;
+  children: React.ReactNode;
 }) {
-  const [failed, setFailed] = useState(false);
-  const sizes = {
-    md: "h-20 w-20 text-2xl",
-    lg: "h-28 w-28 text-3xl",
-    xl: "h-32 w-32 text-4xl",
-  };
-
-  if (failed) {
-    return (
-      <div
-        className={`${sizes[size]} flex shrink-0 items-center justify-center rounded-2xl border-2 border-blue-border bg-bg-blue-tint font-display font-extrabold text-blue-primary shadow-sm`}
-      >
-        {creator.initials}
-      </div>
-    );
-  }
-
   return (
-    <div
-      className={`${sizes[size]} relative shrink-0 overflow-hidden rounded-2xl border-2 border-blue-border bg-bg-blue-tint shadow-sm`}
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white shadow-[0_4px_14px_rgba(10,37,64,0.2)] ring-1 ring-white/40 backdrop-blur-md transition-colors hover:bg-white hover:text-blue-primary"
     >
-      <Image
-        src={creator.portrait}
-        alt={creator.name}
-        fill
-        className="object-cover"
-        sizes="128px"
-        loading="lazy"
-        onError={() => setFailed(true)}
-      />
-    </div>
+      {children}
+    </a>
   );
 }
 
 export function CreatorCard({
   creator,
-  index = 0,
+  description,
+  className = "max-h-[420px]",
 }: {
   creator: Creator;
+  description?: string;
   index?: number;
+  className?: string;
 }) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ delay: index * 0.12, type: "spring", stiffness: 80, damping: 16 }}
-      whileHover={{ y: -6 }}
-      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/50 bg-white/60 p-8 shadow-[0_8px_40px_rgba(2,89,221,0.08)] backdrop-blur-xl transition-colors hover:border-blue-border"
+    <article
+      className={`relative isolate z-0 flex aspect-[4/5] w-full origin-center flex-col overflow-hidden rounded-[1.75rem] p-5 shadow-[0_18px_40px_-10px_rgba(2,89,221,0.4),0_6px_18px_rgba(10,37,64,0.16)] transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:hover:scale-[1.02] sm:p-6 ${className}`}
     >
+      <div className="absolute inset-0" style={{ background: creator.cardBackground }} aria-hidden="true" />
       <div
-        className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-blue-accent/20 blur-3xl transition-opacity duration-500 group-hover:opacity-100 md:opacity-0"
+        className="pointer-events-none absolute inset-0 opacity-35"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 18% 0%, rgba(255,255,255,0.5) 0%, transparent 58%)",
+        }}
         aria-hidden="true"
       />
 
-      <div className="relative flex items-center gap-5">
-        <motion.div whileHover={{ scale: 1.04, rotate: -1 }} transition={{ type: "spring", stiffness: 260, damping: 18 }}>
-          <CreatorPortrait creator={creator} size="xl" />
-        </motion.div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-display text-2xl font-bold text-blue-navy">{creator.name}</h3>
-            <FlagFR />
-          </div>
-          <p className="mt-1 text-sm font-semibold text-blue-primary">{creator.role}</p>
+      <div className="relative z-10 max-w-[58%]">
+        <h3 className="font-display text-2xl font-extrabold leading-none tracking-tight text-white drop-shadow-[0_2px_10px_rgba(10,37,64,0.28)] md:text-[1.85rem]">
+          {creator.name}
+        </h3>
+        <p className="mt-3 text-[13px] leading-relaxed text-white/90">
+          {description ?? creator.desc}
+        </p>
+        <div className="mt-3.5 flex items-center gap-2">
+          <SocialLink href={creator.linkedin} label={`LinkedIn de ${creator.name}`}>
+            <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
+          </SocialLink>
+          <SocialLink href={creator.portfolio} label={`Portfolio de ${creator.name}`}>
+            <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+          </SocialLink>
         </div>
       </div>
 
-      <p className="relative mt-6 flex-1 text-sm leading-relaxed text-text-secondary">
-        {creator.desc}
-      </p>
-
-      <div className="relative mt-6 flex flex-wrap gap-2">
-        {creator.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-lg border border-blue-border bg-bg-blue-tint px-3 py-1 text-xs font-bold text-blue-primary"
-          >
-            {tag}
-          </span>
-        ))}
+      <div className="pointer-events-none absolute -bottom-8 right-[-6%] z-[1] h-[70%] w-[70%]">
+        <img
+          src={`${creator.portrait}?v=2`}
+          alt=""
+          className="h-full w-full object-contain object-bottom drop-shadow-[0_18px_28px_rgba(10,37,64,0.32)]"
+        />
       </div>
-
-      <div className="relative mt-6 flex items-center gap-3">
-        <a
-          href={creator.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`LinkedIn de ${creator.name}`}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#0A66C2] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <Linkedin className="h-4 w-4" aria-hidden="true" />
-          LinkedIn
-        </a>
-        <a
-          href={creator.portfolio}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Portfolio de ${creator.name}`}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border-medium bg-white px-4 py-2.5 text-sm font-bold text-blue-navy transition-colors hover:border-blue-primary hover:text-blue-primary"
-        >
-          Portfolio
-          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-        </a>
-      </div>
-    </motion.article>
+    </article>
   );
 }

@@ -59,14 +59,14 @@ export interface CalculatorResult {
   secondaryLegalMaxDisplay: string;
 }
 
-export function formatEur(amount: number): string {
+export function formatEur(amount: number, locale = "fr-FR"): string {
   if (amount >= 1_000_000) {
-    return `${(amount / 1_000_000).toLocaleString("fr-FR", {
+    return `${(amount / 1_000_000).toLocaleString(locale, {
       minimumFractionDigits: 1,
       maximumFractionDigits: 2,
     })} M€`;
   }
-  return `${Math.round(amount).toLocaleString("fr-FR")} €`;
+  return `${Math.round(amount).toLocaleString(locale)} €`;
 }
 
 function formatHours(h: number): string {

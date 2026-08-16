@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "@lexasafe/ui/styles.css";
 import "./globals.css";
 import { clashDisplay, generalSans, syne } from "@/lib/fonts";
+import { getLocale } from "@/i18n/server";
+import { I18nProvider } from "@/i18n/I18nProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lexasafe.fr"),
@@ -22,15 +24,17 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+
   return (
-    <html lang="fr" className={syne.variable}>
+    <html lang={locale} className={syne.variable}>
       <body className={`${clashDisplay.variable} ${generalSans.variable} font-body antialiased`}>
-        {children}
+        <I18nProvider initialLocale={locale}>{children}</I18nProvider>
       </body>
     </html>
   );

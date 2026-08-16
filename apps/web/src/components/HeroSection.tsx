@@ -2,15 +2,43 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight, Calculator, Flag, Lock, Scale, ShieldCheck, ShieldX, Zap } from "lucide-react";
-import {
-  FadeUp,
-  MagneticButton,
-  ShineMagneticButton,
-  TextRevealBlock,
-  motion,
-} from "@lexasafe/motion";
+import { FadeUp, TextRevealBlock, motion } from "@lexasafe/motion";
+import { useI18n } from "@/i18n/I18nProvider";
+
+const CHIP_ICONS = [Flag, Lock, Scale, ShieldCheck];
 
 export function HeroSection({ title }: { title: ReactNode }) {
+  const { t } = useI18n();
+  const h = t.hero;
+
+  const stats = [
+    {
+      icon: Zap,
+      title: h.stats[0].title,
+      sub: h.stats[0].sub,
+      iconBg: "bg-bg-blue-tint",
+      iconColor: "text-blue-primary",
+      titleColor: "text-blue-primary",
+    },
+    {
+      icon: ShieldCheck,
+      title: h.stats[1].title,
+      sub: h.stats[1].sub,
+      iconBg: "bg-blue-accent/20",
+      iconColor: "text-blue-accent",
+      titleColor: "text-blue-primary",
+    },
+    {
+      icon: ShieldX,
+      title: h.stats[2].title,
+      subTitle: h.stats[2].subTitle,
+      sub: h.stats[2].sub,
+      iconBg: "bg-crimson-bg",
+      iconColor: "text-crimson-threat",
+      titleColor: "text-crimson-threat text-4xl md:text-5xl leading-none",
+    },
+  ];
+
   return (
     <section className="relative overflow-hidden pb-24 pt-28 md:pt-36" id="hero">
       <div className="container relative z-10 mx-auto max-w-6xl px-6">
@@ -21,9 +49,7 @@ export function HeroSection({ title }: { title: ReactNode }) {
             transition={{ delay: 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="mb-5 text-[13px] font-semibold uppercase leading-none tracking-[0.26em] text-text-muted"
           >
-            <TextRevealBlock delay={0.2}>
-              Passerelle souveraine · Réquisitions Judiciaires
-            </TextRevealBlock>
+            <TextRevealBlock delay={0.2}>{h.kicker}</TextRevealBlock>
           </motion.div>
 
           {title}
@@ -34,9 +60,15 @@ export function HeroSection({ title }: { title: ReactNode }) {
             transition={{ delay: 1.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8 max-w-3xl text-lg text-text-secondary md:text-xl"
           >
-            Le standard <strong>100% français et souverain</strong>, taillé pour la{" "}
-            <strong>nouvelle loi européenne e-Evidence</strong>. Hébergé chez{" "}
-            <strong>OVHcloud SecNumCloud</strong> avec garantie <strong>Zéro Connaissance</strong>.
+            {h.leadBefore}
+            <strong>{h.leadStrong1}</strong>
+            {h.leadMid}
+            <strong>{h.leadStrong2}</strong>
+            {h.leadHost}
+            <strong>{h.leadStrong3}</strong>
+            {h.leadZero}
+            <strong>{h.leadStrong4}</strong>
+            {h.leadEnd}
           </motion.p>
 
           <motion.div
@@ -45,72 +77,43 @@ export function HeroSection({ title }: { title: ReactNode }) {
             transition={{ delay: 1.25, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             className="mt-10 flex flex-wrap justify-start gap-4"
           >
-            <ShineMagneticButton
+            <a
               href="/acces"
-              className="rounded-pill bg-blue-primary px-8 py-4 text-lg font-semibold text-white shadow-[0_4px_24px_rgba(2,89,221,0.35)]"
+              className="hero-shine-btn inline-flex items-center gap-2 rounded-pill bg-blue-primary px-8 py-4 text-lg font-semibold text-white shadow-[0_4px_24px_rgba(2,89,221,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-hover hover:shadow-[0_8px_28px_rgba(2,89,221,0.4)]"
             >
-              Créer un compte / Devis
+              {h.cta}
               <ArrowRight className="h-5 w-5" />
-            </ShineMagneticButton>
-            <MagneticButton
+            </a>
+            <a
               href="#calculator"
-              data-cursor="magnetic"
-              className="inline-flex items-center gap-2 rounded-pill border border-border-medium bg-white/80 px-6 py-4 font-semibold text-blue-navy backdrop-blur-sm"
+              className="inline-flex items-center gap-2 rounded-pill border border-border-medium bg-white/80 px-6 py-4 font-semibold text-blue-navy backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-primary hover:text-blue-primary"
             >
               <Calculator className="h-5 w-5" />
-              <span>Simuler vos Économies</span>
-            </MagneticButton>
+              <span>{h.simulate}</span>
+            </a>
           </motion.div>
 
           <FadeUp index={0}>
             <div className="mt-10 flex flex-wrap justify-start gap-3">
-              {[
-                { icon: Flag, text: "100% Souverain Français" },
-                { icon: Lock, text: "Canaux sécurisés E2EE" },
-                { icon: Scale, text: "Loi e-Evidence 2026" },
-                { icon: ShieldCheck, text: "Évitez l'amende de 2% du CA" },
-              ].map(({ icon: Icon, text }) => (
-                <motion.div
-                  key={text}
-                  whileHover={{ y: -3, scale: 1.02 }}
-                  className="flex items-center gap-2 rounded-pill border border-blue-border bg-white/70 px-4 py-2 text-sm font-semibold text-blue-navy backdrop-blur-sm"
-                >
-                  <Icon className="h-4 w-4 text-blue-primary" />
-                  {text}
-                </motion.div>
-              ))}
+              {h.chips.map((text, i) => {
+                const Icon = CHIP_ICONS[i] ?? Flag;
+                return (
+                  <motion.div
+                    key={text}
+                    whileHover={{ y: -3, scale: 1.02 }}
+                    className="flex items-center gap-2 rounded-pill border border-blue-border bg-white/70 px-4 py-2 text-sm font-semibold text-blue-navy backdrop-blur-sm"
+                  >
+                    <Icon className="h-4 w-4 text-blue-primary" />
+                    {text}
+                  </motion.div>
+                );
+              })}
             </div>
           </FadeUp>
 
           <FadeUp index={1}>
             <div className="mt-12 grid gap-4 md:grid-cols-3 md:items-stretch">
-              {[
-                {
-                  icon: Zap,
-                  title: "Plus rapide",
-                  sub: "Traitement immédiat",
-                  iconBg: "bg-bg-blue-tint",
-                  iconColor: "text-blue-primary",
-                  titleColor: "text-blue-primary",
-                },
-                {
-                  icon: ShieldCheck,
-                  title: "100%",
-                  sub: "Souverain SecNumCloud",
-                  iconBg: "bg-blue-accent/20",
-                  iconColor: "text-blue-accent",
-                  titleColor: "text-blue-primary",
-                },
-                {
-                  icon: ShieldX,
-                  title: "0",
-                  subTitle: "Fraudes",
-                  sub: "Aucune fraude passée",
-                  iconBg: "bg-crimson-bg",
-                  iconColor: "text-crimson-threat",
-                  titleColor: "text-crimson-threat text-4xl md:text-5xl leading-none",
-                },
-              ].map((card, i) => (
+              {stats.map((card, i) => (
                 <motion.div
                   key={card.title}
                   initial={{ opacity: 0, y: 40, rotateX: 12 }}

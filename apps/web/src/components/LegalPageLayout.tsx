@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SiteFooter } from "./SiteFooter";
 import { WebHeader } from "./WebHeader";
+import { getMessages } from "@/i18n/server";
 
-export function LegalPageLayout({
+export async function LegalPageLayout({
   badge,
   title,
   subtitle,
@@ -14,17 +15,19 @@ export function LegalPageLayout({
   subtitle: string;
   children: React.ReactNode;
 }) {
+  const { t } = await getMessages();
+
   return (
     <>
       <WebHeader />
-      <main className="relative z-10 bg-gradient-to-b from-white via-[#FBF8F4] to-[#F5F9FF] pb-24 pt-32">
+      <main className="relative z-10 bg-gradient-to-b from-white via-[#FBF8F4] to-[#F5F9FF] pb-24 pt-36">
         <div className="container mx-auto max-w-3xl px-6">
           <Link
             href="/"
             className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-blue-primary hover:underline"
           >
             <ArrowLeft className="h-4 w-4" />
-            Retour à l&apos;accueil
+            {t.common.backHome}
           </Link>
 
           <div className="mb-10">

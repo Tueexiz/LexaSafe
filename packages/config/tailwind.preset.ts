@@ -53,6 +53,7 @@ const preset: Partial<Config> = {
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
+        syne: ["var(--font-syne)", "sans-serif"],
       },
       borderRadius: {
         xs: "4px",

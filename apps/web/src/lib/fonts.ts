@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 /** Hero display: ExtraBold 800 only */
 export const syne = Syne({
   subsets: ["latin"],
-  weight: ["800"],
+  weight: ["600", "700", "800"],
   variable: "--font-syne",
   display: "swap",
   preload: true,
