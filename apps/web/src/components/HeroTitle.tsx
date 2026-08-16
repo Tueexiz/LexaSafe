@@ -19,7 +19,6 @@ export async function HeroTitle() {
             return (
               <span key={`${word}-${i}`} className="hero-title-mask inline-block overflow-hidden align-bottom">
                 <span
-                  id={isAccent ? "hero-accent-word" : undefined}
                   className={`hero-title-word inline-block text-[length:inherit] leading-[inherit] ${isAccent ? "text-[#0259DD]" : ""}`}
                   style={{ animationDelay: `${0.35 + idx * 0.075}s` }}
                 >

@@ -13,30 +13,10 @@ const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL ?? "http://localhost:3001";
 
 type NavId = "home" | "simulator" | "team";
 
-function navClass(highlighted: boolean, onBlue: boolean) {
+function navClass(highlighted: boolean) {
   return `relative z-[1] rounded-full px-5 py-2 font-syne text-sm font-semibold transition-colors ${
-    highlighted
-      ? "text-blue-navy"
-      : onBlue
-        ? "text-white/85 hover:text-white"
-        : "text-blue-navy/70 hover:text-blue-navy"
+    highlighted ? "text-blue-navy" : "text-blue-navy/70 hover:text-blue-navy"
   }`;
-}
-
-function isOverPrimaryBlue() {
-  const barTop = 8;
-  const barBottom = 88;
-  const nodes = document.querySelectorAll(
-    "#hero-accent-word, main .hero-shine-btn, main .bg-blue-primary, main .text-blue-primary"
-  );
-  for (const el of nodes) {
-    const r = el.getBoundingClientRect();
-    if (r.width < 2 || r.height < 2) continue;
-    if (r.bottom > barTop && r.top < barBottom && r.right > 0 && r.left < window.innerWidth) {
-      return true;
-    }
-  }
-  return false;
 }
 
 function sectionInView(): NavId {
@@ -63,19 +43,7 @@ export function WebHeader() {
     pathname.startsWith("/createurs") ? "team" : pathname === "/" ? "home" : null
   );
   const [hover, setHover] = useState<NavId | null>(null);
-  const [overAccent, setOverAccent] = useState(false);
   const highlighted = hover ?? active;
-
-  useEffect(() => {
-    const update = () => setOverAccent(isOverPrimaryBlue());
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, [pathname]);
 
   useEffect(() => {
     if (pathname.startsWith("/createurs")) {
@@ -105,10 +73,10 @@ export function WebHeader() {
 
   return (
     <>
-      <header className={`pointer-events-none fixed left-0 right-0 top-4 z-[1000] px-4 md:px-8 ${overAccent ? "header-over-accent" : ""}`}>
+      <header className="pointer-events-none fixed left-0 right-0 top-4 z-[1000] px-4 md:px-8">
         <div className="pointer-events-auto relative mx-auto flex max-w-[1440px] items-center justify-between">
           <div className="relative z-10 shrink-0">
-            <BrandMark inverted={overAccent} className="ios-glass relative rounded-full px-3 py-1.5" />
+            <BrandMark className="ios-glass relative rounded-full px-3 py-1.5" />
           </div>
 
           <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">
@@ -124,7 +92,7 @@ export function WebHeader() {
                   aria-current={active === link.id ? "page" : undefined}
                   onClick={() => setActive(link.id)}
                   onMouseEnter={() => setHover(link.id)}
-                  className={navClass(highlighted === link.id, overAccent)}
+                  className={navClass(highlighted === link.id)}
                 >
                   {highlighted === link.id && (
                     <motion.span
@@ -140,7 +108,7 @@ export function WebHeader() {
           </div>
 
           <div className="relative z-10 hidden items-center gap-2.5 md:flex">
-            <LanguageSwitcher align="right" inverted={overAccent} />
+            <LanguageSwitcher align="right" />
             <a
               href={`${AUTH_URL}/login`}
               className="hero-shine-btn inline-flex items-center rounded-pill bg-blue-primary px-5 py-2.5 font-syne text-sm font-semibold text-white shadow-[0_4px_24px_rgba(2,89,221,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-hover hover:shadow-[0_8px_28px_rgba(2,89,221,0.4)]"
