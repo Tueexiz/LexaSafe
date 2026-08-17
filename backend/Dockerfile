@@ -14,6 +14,9 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
+RUN adduser --system --no-create-home appuser && chown -R appuser /app
+USER appuser
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 

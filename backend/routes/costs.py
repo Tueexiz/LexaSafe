@@ -4,7 +4,7 @@ Barème Officiel CPP (Art. R. 213-1) • Génération de Mémoires de Frais Cerf
 """
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field
+from schemas.costs import CostCalculationRequest
 from typing import Optional, List
 
 router = APIRouter(prefix="/api/costs", tags=["costs"])
@@ -18,11 +18,6 @@ OFFICIAL_TARIFS = {
     "extraction_serveur_cloud": 85.00   # Copie forensique de volume cloud
 }
 
-
-class CostCalculationRequest(BaseModel):
-    requisitions_count_monthly: int = Field(..., ge=1, le=10000)
-    service_type: str = Field(default="identification_ip")
-    hourly_legal_cost: float = Field(default=85.0, ge=30.0, le=500.0)
 
 
 @router.get("/tarifs")

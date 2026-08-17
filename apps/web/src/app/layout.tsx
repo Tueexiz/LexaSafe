@@ -24,6 +24,9 @@ export const metadata: Metadata = {
       "Sécurisez et automatisez vos réquisitions judiciaires. 100% souverain, hébergé OVHcloud SecNumCloud.",
   },
   robots: { index: true, follow: true },
+  verification: {
+    google: "56ZNy-3MvzpDXBhHVoCcrI9sAotyu4wJe7bi38RXqBc",
+  },
 };
 
 export default async function RootLayout({

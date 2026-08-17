@@ -1,0 +1,28 @@
+---
+description: Creative Dev + LexaSafe brand constraints (Lenis, GSAP, R3F, palette)
+alwaysApply: true
+---
+
+# LexaSafe Creative Dev
+
+- Palette: `#FBF8F4` / `#84AFFB` / `#0259DD` / `#D91A2A`. Navbar + hero titles: Syne.
+- Magnetic hover ONLY on `HeroRequisition` presentation cards — never on homepage navbar/hero CTAs.
+- Keep `CreatorsSection` a Server Component. Do not add `"use client"` under `HomeShell`.
+- No DPO email in footer. No `optimizePackageImports` on workspace packages. No immutable `/_next/static` homepage cache.
+
+```tsx
+// ❌ BAD — ScrollTrigger in useEffect, no revert
+useEffect(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.to(".x", { scrollTrigger: { trigger: ".x" } });
+}, []);
+
+// ✅ GOOD — useGSAP context auto-reverts (kills ScrollTriggers)
+useGSAP(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from(".poc-card", { y: 40, scrollTrigger: { trigger: ".poc-cards", start: "top 80%" } });
+}, { scope: rootRef });
+```
+
+- Lenis: `lenis/react` (not deprecated `@studio-freight/react-lenis`). Single instance in `apps/web` root layout (`SmoothScroll`). Do not wrap `/` or `/poc` in a second Lenis. Homepage GSAP lives in `HomeScrollDirector` as a **sibling** of `HomeShell`, not nested under it. R3F: client + `dynamic(..., { ssr: false })`.
+- AI keys server-only. `/setup` gets presence booleans only.

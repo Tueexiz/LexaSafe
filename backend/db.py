@@ -5,12 +5,51 @@ Local : Moteur Autonome Auto-Initialisé (Zéro configuration requise)
 """
 
 import asyncio
+import base64
+import hashlib
 import json
 import time
 import uuid
 from typing import Any, Dict, List, Optional
+
+from cryptography.fernet import Fernet, InvalidToken
+
 from config import settings
 from security import hash_password
+
+
+def _get_fernet() -> Fernet:
+    """
+    Dérive une clé Fernet depuis ``app_master_key`` via SHA-256.
+
+    Fernet attend une clé de 32 octets encodée URL-safe Base64.
+    SHA-256 produit exactement 32 octets, ce qui correspond à :
+    16 octets pour la clé de signature HMAC + 16 octets pour la clé AES-128-CBC.
+    """
+    raw_key = hashlib.sha256(settings.app_master_key.encode("utf-8")).digest()
+    return Fernet(base64.urlsafe_b64encode(raw_key))
+
+
+def _encrypt_totp_secret(secret_b32: str) -> bytes:
+    """Chiffre un secret TOTP Base32 avec Fernet avant stockage en BYTEA."""
+    return _get_fernet().encrypt(secret_b32.encode("utf-8"))
+
+
+def _decrypt_totp_secret(encrypted: bytes) -> str:
+    """
+    Déchiffre un secret TOTP depuis BYTEA.
+
+    Gère la rétro-compatibilité : si le déchiffrement Fernet échoue,
+    tente de lire la valeur comme du texte brut (migration legacy).
+    """
+    try:
+        return _get_fernet().decrypt(encrypted).decode("utf-8")
+    except (InvalidToken, Exception):
+        # Fallback : valeur legacy stockée en clair (convert_to UTF-8)
+        try:
+            return bytes(encrypted).decode("utf-8", errors="ignore").strip()
+        except Exception:
+            return ""
 
 # Variable globale pour stocker le pool Postgres s'il est actif
 pg_pool = None
@@ -179,11 +218,12 @@ async def close_db():
 
 
 def _row_to_user(row: Any) -> Dict[str, Any]:
+    """Convertit une ligne asyncpg en dict utilisateur, déchiffrant le secret TOTP."""
     totp_raw = row["totp_secret_encrypted"]
     if totp_raw is None:
         totp_secret = ""
     elif isinstance(totp_raw, (bytes, bytearray, memoryview)):
-        totp_secret = bytes(totp_raw).decode("utf-8", errors="ignore")
+        totp_secret = _decrypt_totp_secret(bytes(totp_raw))
     else:
         totp_secret = str(totp_raw)
     return {
@@ -244,7 +284,13 @@ async def get_user_by_id(user_id: str) -> Optional[Dict[str, Any]]:
 
 
 async def persist_totp_secret(user: Dict[str, Any], secret_b32: str) -> None:
-    """Persiste le secret TOTP (enroll) en local et, si possible, en Postgres."""
+    """
+    Persiste le secret TOTP (enrollment) en local et en Postgres.
+
+    En local (dev) : stocké en clair dans le dict mémoire.
+    En Postgres (prod) : chiffré via Fernet (AES-128-CBC + HMAC-SHA256)
+    avec la clé dérivée de ``app_master_key``.
+    """
     user["totp_secret"] = secret_b32
     email = str(user.get("email", "")).strip().lower()
     if email and email in local_db["users"]:
@@ -254,13 +300,14 @@ async def persist_totp_secret(user: Dict[str, Any], secret_b32: str) -> None:
 
     if is_postgres_active and pg_pool:
         try:
+            encrypted = _encrypt_totp_secret(secret_b32)
             await pg_pool.execute(
                 """
                 UPDATE users
-                SET totp_secret_encrypted = convert_to($1, 'UTF8')
+                SET totp_secret_encrypted = $1
                 WHERE id::text = $2 OR lower(email) = $3
                 """,
-                secret_b32,
+                encrypted,
                 str(user.get("id", "")),
                 email,
             )

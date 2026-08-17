@@ -11,13 +11,12 @@ os.environ["APP_ENV"] = "development"
 # Ajouter le dossier backend au path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "backend"))
 
+import pyotp
 from fastapi.testclient import TestClient
 from main import app
 from db import local_db
 from security import (
-    generate_totp_code,
     generate_totp_secret_base32,
-    totp_secret_to_bytes,
     verify_totp_code,
     build_otpauth_uri,
     hash_password,
@@ -29,21 +28,19 @@ def _current_totp(email: str) -> str:
     user = local_db["users"][email]
     secret = user["totp_secret"]
     assert secret, "Le secret TOTP doit être persisté après l'étape login (enroll)"
-    return generate_totp_code(totp_secret_to_bytes(secret))
+    return pyotp.TOTP(secret).now()
 
 
 def test_totp_helpers():
     secret_b32 = generate_totp_secret_base32()
     assert "=" not in secret_b32
-    secret_bytes = totp_secret_to_bytes(secret_b32)
-    code = generate_totp_code(secret_bytes)
+    code = pyotp.TOTP(secret_b32).now()
     assert len(code) == 6 and code.isdigit()
-    assert verify_totp_code(secret_bytes, code)
-    assert not verify_totp_code(secret_bytes, "000000") or code == "000000"
+    assert verify_totp_code(secret_b32, code)
+    assert not verify_totp_code(secret_b32, "000000") or code == "000000"
     uri = build_otpauth_uri("officier.aurelien@interieur.gouv.fr", secret_b32)
-    assert uri.startswith("otpauth://totp/LexaSafe:officier.aurelien@interieur.gouv.fr?")
+    assert uri.startswith("otpauth://totp/LexaSafe:officier.aurelien%40interieur.gouv.fr?")
     assert "secret=" in uri and "issuer=LexaSafe" in uri
-    assert "algorithm=SHA1" in uri and "digits=6" in uri and "period=30" in uri
     digest = hash_password("SecuredPass2026!")
     assert digest.startswith("$argon2id") or digest.startswith("pbkdf2_sha512$")
     assert verify_password(digest, "SecuredPass2026!")

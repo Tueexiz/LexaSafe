@@ -161,5 +161,6 @@ export { getLenisInstance, subscribeLenis, type LenisLike } from "./lenis-store"
 export { TextReveal, TextRevealBlock, HeroTitleReveal } from "./TextReveal";
 export { ShineMagneticButton } from "./ShineMagneticButton";
 export { TiltGlassCard, TiltCardItem } from "./TiltGlassCard";
+export { ScannerQR } from "./ScannerQR";
 export { useMediaCapabilities } from "./useMediaCapabilities";
 export { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";

@@ -2,19 +2,19 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr, Field
 
 from security import validate_phone_number_e164
-from services.phone import rate_limit, generate_phone_otp
+from services.rate_limit import rate_limit
+from services.otp import generate_phone_otp
 from services.mail import send_phone_otp
 
+from schemas.demo import DemoRequest
 router = APIRouter(prefix="/api/demo", tags=["demo"])
 
 
-class DemoRequest(BaseModel):
-    company_name: str = Field(..., min_length=2, max_length=255)
-    siren: str = Field(..., pattern=r"^\d{9}$")
-    email: EmailStr
-    phone: str = Field(..., max_length=20)
-    message: str = Field(default="", max_length=2000)
 
+
+@router.post("/seedance")
+async def demo_seedance():
+    return {"publicVideo": "/demo/lexasafe-product.mp4"}
 
 @router.post("/request")
 async def demo_request(req: DemoRequest, request: Request):

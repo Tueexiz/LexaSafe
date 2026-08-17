@@ -6,40 +6,32 @@ A2F / TOTP RFC 6238 • JWT Souverain • Contrôle d'Accès Basé sur les Rôle
 import uuid
 from typing import Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Depends, Header
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import EmailStr, Field
+from schemas.auth import LoginRequest, A2FVerifyRequest
 
-from config import is_production
-from db import get_user_by_email, get_user_by_id, persist_totp_secret, upsert_local_user
+from db import get_user_by_email, get_user_by_id, persist_totp_secret
 from security import (
     verify_password,
-    hash_password,
     create_session_token,
     verify_session_token,
     generate_totp_secret_base32,
-    totp_secret_to_bytes,
     verify_totp_code,
     build_otpauth_uri,
 )
-from services.phone import (
+from services.a2f import (
     store_a2f_challenge,
     get_a2f_challenge,
     delete_a2f_challenge,
-    RedisUnavailableError,
     A2F_CHALLENGE_TTL,
 )
+from services.redis_client import RedisUnavailableError
+from services.rate_limit import rate_limit
+
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str = Field(..., min_length=6, max_length=128)
-    role: Optional[str] = Field(default="opj", pattern="^(opj|enterprise|super_admin)$")
 
-
-class A2FVerifyRequest(BaseModel):
-    challenge_id: str
-    totp_code: str = Field(..., min_length=6, max_length=8)
 
 
 def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any]:
@@ -66,26 +58,18 @@ def _redis_unavailable() -> HTTPException:
 async def login(req: LoginRequest):
     """
     Étape 1 : vérifie le mot de passe Argon2id et ouvre un challenge A2F TOTP (TTL 300s).
+
+    Rate limiting : 5 tentatives / 15 minutes par adresse email.
     """
     email = req.email.strip().lower()
-    user = await get_user_by_email(email)
 
+    # Rate limiting avant toute opération coûteuse (Argon2id)
+    if not await rate_limit(f"login:{email}", 5, 900):
+        raise HTTPException(status_code=429, detail="Trop de tentatives, réessayez plus tard")
+
+    user = await get_user_by_email(email)
     if not user:
-        # Laboratoire uniquement : seed OPJ @*.gouv.fr hashé + TOTP à enroller.
-        # Interdit en production (pas de compte à la volée, pas de mot de passe en clair).
-        if is_production() or not email.endswith(".gouv.fr"):
-            raise HTTPException(status_code=401, detail="Identifiant ou mot de passe incorrect")
-        user = {
-            "id": f"usr-opj-{uuid.uuid4().hex[:6]}",
-            "email": email,
-            "name": f"Officier ({email.split('@')[0]})",
-            "role": "opj_investigator",
-            "service": "Police Nationale / Gendarmerie",
-            "password": hash_password(req.password),
-            "is_verified": True,
-            "totp_secret": "",
-        }
-        upsert_local_user(user)
+        raise HTTPException(status_code=401, detail="Identifiant ou mot de passe incorrect")
 
     if not verify_password(user.get("password", ""), req.password):
         raise HTTPException(status_code=401, detail="Identifiant ou mot de passe incorrect")
@@ -128,7 +112,14 @@ async def login(req: LoginRequest):
 async def verify_2fa(req: A2FVerifyRequest):
     """
     Étape 2 : vérifie le TOTP RFC 6238 du challenge Redis (usage unique) puis délivre le JWT.
+
+    Rate limiting : 5 tentatives / 5 minutes par challenge (anti-brute-force 10^6 combinaisons).
+    Burn-after-reading : le challenge est détruit de Redis immédiatement après validation.
     """
+    # Rate limiting par challenge_id
+    if not await rate_limit(f"totp:{req.challenge_id}", 5, 300):
+        raise HTTPException(status_code=429, detail="Trop de tentatives, réessayez plus tard")
+
     try:
         challenge = await get_a2f_challenge(req.challenge_id)
     except RedisUnavailableError:
@@ -147,13 +138,8 @@ async def verify_2fa(req: A2FVerifyRequest):
     if not totp_secret:
         raise HTTPException(status_code=400, detail="Code A2F invalide ou expiré")
 
-    code = req.totp_code.replace(" ", "").strip()
-    try:
-        secret_bytes = totp_secret_to_bytes(totp_secret)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Code A2F invalide ou expiré")
-
-    if not verify_totp_code(secret_bytes, code):
+    # verify_totp_code accepte directement le secret Base32 (pyotp)
+    if not verify_totp_code(totp_secret, req.totp_code):
         raise HTTPException(status_code=400, detail="Code A2F invalide ou expiré")
 
     try:

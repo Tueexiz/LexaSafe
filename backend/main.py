@@ -11,6 +11,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from loguru import logger
+import sys
+
+# Configuration de Loguru pour émettre du JSON (standard industriel / ELK / Datadog)
+logger.remove()
+logger.add(sys.stdout, serialize=True, level="INFO")
 
 from config import settings
 from db import init_db, close_db
@@ -53,11 +59,12 @@ class AuditMiddleware(BaseHTTPMiddleware):
                 "status": response.status_code,
                 "duration_ms": duration_ms,
                 "fingerprint": fp,
-                "timestamp": time.time(),
             }
-            # Log d'audit conforme e-Evidence
+            # Log d'audit conforme e-Evidence (JSON Structuré via Loguru)
             if response.status_code >= 400:
-                print(f"[AUDIT-ALERT] {json.dumps(log_entry)}")
+                logger.warning("Echec ou erreur requête API", extra=log_entry)
+            else:
+                logger.info("Requête API réussie", extra=log_entry)
 
         return response
 
@@ -78,13 +85,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configuration CORS pour autoriser le front-end et le tunnel
+# Configuration CORS — origines strictes, pas de wildcard
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(AuditMiddleware)

@@ -1,0 +1,17 @@
+# LexaSafe — Creative Dev (enforce)
+
+## Brand (do not regress)
+- Palette only: `#FBF8F4` / `#84AFFB` / `#0259DD` / `#D91A2A`. Navbar + hero titles: Syne.
+- No magnetic hover on existing homepage navbar/hero CTAs. Magnetic is allowed ONLY on presentation cards in `HeroRequisition.tsx`.
+- `CreatorsSection` stays a Server Component. Do not nest new `"use client"` modules under `HomeShell` (homepage crash risk).
+- Do not put DPO email in the footer. Do not set `optimizePackageImports` on workspace packages. Do not make homepage cache immutable `/_next/static`.
+
+## Motion / 3D stack
+- Smooth scroll: **Lenis**. `@studio-freight/react-lenis` is deprecated (Studio Freight → darkroom.engineering). Use `lenis/react` (`ReactLenis`, `useLenis`) or `@/lib/react-lenis`. Homepage already uses vanilla `lenis` in `SmoothScroll` — do not double-wrap `/` (breaks navbar scroll-spy). POC routes (`/poc`) may use `ReactLenis`.
+- GSAP: **ScrollTrigger only inside `useGSAP()`** (`@gsap/react`). Register plugins in that callback. `useGSAP` reverts context on cleanup (kills tweens + ScrollTriggers). Never leave ScrollTriggers without revert.
+- SplitText is Club GSAP (paid) — not in public `gsap`. Split letters in React, animate with GSAP or Framer Motion.
+- Framer Motion: micro-interactions only (hover, springs). Prefer `@lexasafe/motion` re-exports; do not add a second Framer copy.
+- Three.js / R3F: 3D only. Canvas = client, `next/dynamic` `{ ssr: false }`. Do not mount R3F on the marketing homepage unless HomeShell is proven stable.
+
+## AI secrets
+- Gemini / Luma / Meshy keys: server-only (`GEMINI_API_KEY`, `LUMA_API_KEY`, `MESHY_API_KEY`). Never `NEXT_PUBLIC_*` secrets. Setup page may receive **booleans** (key present), never key values.

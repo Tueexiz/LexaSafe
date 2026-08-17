@@ -53,17 +53,67 @@ apt-get install -y \
   ca-certificates \
   gnupg \
   openssl \
-  lsb-release
+  lsb-release \
+  unattended-upgrades \
+  apt-listchanges
 
-# Jail SSH fail2ban (si absente)
-if [ ! -f /etc/fail2ban/jail.d/sshd.local ]; then
-  cat > /etc/fail2ban/jail.d/sshd.local <<'EOF'
+# Configuration des mises à jour automatiques de sécurité
+cat > /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";
+EOF
+
+cat > /etc/apt/apt.conf.d/50unattended-upgrades <<'EOF'
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-security";
+    "${distro_id}ESMApps:${distro_codename}-apps-security";
+};
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "false";
+EOF
+systemctl enable --now unattended-upgrades
+
+# Hardening Réseau (Sysctl)
+cat > /etc/sysctl.d/99-lexasafe-hardening.conf << 'EOF'
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_max_syn_backlog = 2048
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.icmp_echo_ignore_all = 1
+EOF
+sysctl -p /etc/sysctl.d/99-lexasafe-hardening.conf
+
+# Jail SSH et Nginx fail2ban
+cat > /etc/fail2ban/jail.d/lexasafe.local <<'EOF'
 [sshd]
 enabled = true
 backend = systemd
+
+[nginx-http-auth]
+enabled = true
+port = http,https
+logpath = /var/log/nginx/error.log
+
+[nginx-botsearch]
+enabled = true
+port = http,https
+logpath = /var/log/nginx/access.log
 EOF
-fi
+
 systemctl enable --now fail2ban >/dev/null 2>&1 || systemctl restart fail2ban || true
+
+# Durcissement SSH (désactiver authentification par mot de passe si clé déployée)
+if [ -f /root/.ssh/authorized_keys ] && [ -s /root/.ssh/authorized_keys ]; then
+  sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+  systemctl reload sshd 2>/dev/null || systemctl reload ssh 2>/dev/null || true
+  echo "SSH durci : authentification par mot de passe désactivée (clé SSH détectée)."
+fi
 
 # -----------------------------------------------------------------------------
 # 3. Docker Engine + plugin Compose (script officiel)
@@ -83,6 +133,18 @@ if ! docker compose version >/dev/null 2>&1; then
   echo "Avertissement : le plugin Docker Compose est introuvable. Vérifiez docker-compose-plugin."
 fi
 
+# Limitation des logs Docker
+cat > /etc/docker/daemon.json << 'EOF'
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "50m",
+    "max-file": "3"
+  }
+}
+EOF
+systemctl restart docker
+
 # -----------------------------------------------------------------------------
 # 4. Pare-feu UFW (non interactif)
 # -----------------------------------------------------------------------------
@@ -90,12 +152,13 @@ echo ""
 echo "[4/8] Configuration UFW"
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow 22/tcp
+ufw allow 22/tcp comment 'SSH public / local'
+ufw allow from 10.88.0.0/24 to any port 22 proto tcp comment 'SSH via WireGuard'
 ufw allow 80/tcp
 ufw allow 443/tcp
 ufw allow 51820/udp
 ufw --force enable
-echo "UFW actif (22/tcp, 80/tcp, 443/tcp, 51820/udp)."
+echo "UFW actif (22/tcp VPN-only, 80/tcp, 443/tcp, 51820/udp)."
 
 # -----------------------------------------------------------------------------
 # 5. Certificats Let's Encrypt (peut être ignoré)
@@ -150,6 +213,21 @@ generer_certificats() {
     return 0
   fi
   echo "Certificats Let's Encrypt générés dans ${LE_LIVE}"
+
+  # Deploy hook pour le renouvellement automatique
+  mkdir -p /etc/letsencrypt/renewal-hooks/deploy
+  cat > /etc/letsencrypt/renewal-hooks/deploy/lexasafe.sh <<HOOK
+#!/bin/bash
+set -euo pipefail
+cp -L /etc/letsencrypt/live/${DOMAIN}/fullchain.pem ${SSL_CERTS_DIR}/lexasafe_bundle.crt
+cp -L /etc/letsencrypt/live/${DOMAIN}/privkey.pem ${SSL_PRIVATE_DIR}/lexasafe.key
+chmod 644 ${SSL_CERTS_DIR}/lexasafe_bundle.crt
+chmod 640 ${SSL_PRIVATE_DIR}/lexasafe.key
+chown root:root ${SSL_CERTS_DIR}/lexasafe_bundle.crt ${SSL_PRIVATE_DIR}/lexasafe.key
+docker exec lexasafe_proxy nginx -s reload 2>/dev/null || true
+echo "[CERTBOT-HOOK] Certificats copiés et Nginx rechargé."
+HOOK
+  chmod 700 /etc/letsencrypt/renewal-hooks/deploy/lexasafe.sh
 }
 
 echo ""
@@ -172,6 +250,11 @@ generer_secret_si_absent() {
   fi
   openssl rand -base64 48 > "${dest}"
   chmod 600 "${dest}"
+  # Validation : le fichier doit contenir au moins 64 caractères
+  if [ "$(wc -c < "${dest}")" -lt 64 ]; then
+    echo "ERREUR CRITIQUE : secret trop court dans ${dest}. Régénérez manuellement."
+    exit 1
+  fi
   echo "Créé : ${dest}"
 }
 
@@ -180,40 +263,60 @@ generer_secret_si_absent "${SECRETS_DIR}/master_key.txt"
 generer_secret_si_absent "${SECRETS_DIR}/db_encryption_key.txt"
 
 # -----------------------------------------------------------------------------
-# 7. Liens SSL attendus par nginx (volume ./secrets/ssl:/etc/ssl:ro)
+# 7. Certificats SSL copiés pour nginx (volume ./secrets/ssl:/etc/ssl:ro)
 # -----------------------------------------------------------------------------
 echo ""
-echo "[7/8] Liens symboliques certificats nginx"
-BUNDLE_LINK="${SSL_CERTS_DIR}/lexasafe_bundle.crt"
-KEY_LINK="${SSL_PRIVATE_DIR}/lexasafe.key"
+echo "[7/8] Copie des certificats nginx"
+BUNDLE_DEST="${SSL_CERTS_DIR}/lexasafe_bundle.crt"
+KEY_DEST="${SSL_PRIVATE_DIR}/lexasafe.key"
 
 if [ -f "${LE_LIVE}/fullchain.pem" ] && [ -f "${LE_LIVE}/privkey.pem" ]; then
-  ln -sfn "${LE_LIVE}/fullchain.pem" "${BUNDLE_LINK}"
-  ln -sfn "${LE_LIVE}/privkey.pem" "${KEY_LINK}"
-  chmod 644 "${BUNDLE_LINK}" 2>/dev/null || true
-  chmod 640 "${KEY_LINK}" 2>/dev/null || true
-  chown root:root "${BUNDLE_LINK}" "${KEY_LINK}" 2>/dev/null || true
-  echo "Liens SSL : ${BUNDLE_LINK} et ${KEY_LINK}"
+  cp -L "${LE_LIVE}/fullchain.pem" "${BUNDLE_DEST}"
+  cp -L "${LE_LIVE}/privkey.pem" "${KEY_DEST}"
+  chmod 644 "${BUNDLE_DEST}"
+  chmod 640 "${KEY_DEST}"
+  chown root:root "${BUNDLE_DEST}" "${KEY_DEST}"
+  echo "Certificats SSL copiés : ${BUNDLE_DEST} et ${KEY_DEST}"
 else
-  echo "Let's Encrypt introuvable (${LE_LIVE}). Liens SSL non créés."
-  echo "Après un certbot réussi, recréez :"
-  echo "  ln -sfn ${LE_LIVE}/fullchain.pem ${BUNDLE_LINK}"
-  echo "  ln -sfn ${LE_LIVE}/privkey.pem ${KEY_LINK}"
+  echo "Let's Encrypt introuvable (${LE_LIVE}). Certificats SSL non copiés."
+  echo "Après un certbot réussi, copiez manuellement :"
+  echo "  cp -L ${LE_LIVE}/fullchain.pem ${BUNDLE_DEST}"
+  echo "  cp -L ${LE_LIVE}/privkey.pem ${KEY_DEST}"
 fi
 
 # -----------------------------------------------------------------------------
-# 8. Suite opératoire
+# 8. Fichier .env automatique (si absent)
 # -----------------------------------------------------------------------------
 echo ""
-echo "[8/8] Terminé"
+echo "[8/9] Génération du fichier .env"
+ENV_FILE="${LEXA_ROOT}/infra/.env"
+if [ -f "${ENV_FILE}" ]; then
+  echo "Fichier .env conservé (déjà présent)."
+else
+  mkdir -p "${LEXA_ROOT}/infra"
+  RANDOM_PG_PASS=$(openssl rand -hex 16)
+  cat > "${ENV_FILE}" <<EOF
+POSTGRES_PASSWORD=${RANDOM_PG_PASS}
+SMTP_HOST=ssl0.ovh.net
+SMTP_PORT=587
+SMTP_USER=contact@lexasafe.fr
+SMTP_PASSWORD=change_me
+SMTP_FROM=noreply@lexasafe.fr
+EOF
+  chmod 600 "${ENV_FILE}"
+  echo "Fichier ${ENV_FILE} créé avec un POSTGRES_PASSWORD sécurisé."
+fi
+
+# -----------------------------------------------------------------------------
+# 9. Suite opératoire
+# -----------------------------------------------------------------------------
+echo ""
+echo "[9/9] Terminé"
 echo "======================================================="
-echo "Prochaines étapes :"
-echo "  1. Copier/cloner le projet dans ${LEXA_ROOT} s'il est absent"
-echo "     (ne pas écraser ${SECRETS_DIR})."
-echo "  2. Créer ${LEXA_ROOT}/infra/.env avec POSTGRES_PASSWORD (fort, unique)."
-echo "     Ne jamais committer ce fichier."
-echo "  3. cd ${LEXA_ROOT}/infra && docker compose up -d --build"
-echo "  4. Configurer WireGuard à part (écoute UDP 51820 déjà ouverte)."
+echo "Infrastructure Debian 12 préparée avec succès."
+echo "Prochaines étapes (automatisées via MenuLinux) :"
+echo "  1. Uploader le code source."
+echo "  2. Lancer les conteneurs."
 echo "======================================================="
 echo "Rappels :"
 echo "  - DNS A/AAAA de ${DOMAIN} + auth/app/api doivent pointer vers ce VPS AVANT certbot."

@@ -35,7 +35,7 @@ export function DemoExperience({
     setFilmStatus("loading");
     setFilmError("");
     try {
-      const res = await fetch("/api/demo/seedance", {
+      const res = await fetch(`${API_URL}/api/demo/seedance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),

@@ -18,3 +18,30 @@ backend/data/opj_registration_requests/*.json
 backend/data/registration_requests/*.json
 *.tsbuildinfo
 
+# Environnements
+.env*
+!.env.example
+
+# Bases de données locales
+*.sqlite
+*.sqlite3
+*.db
+
+# Certificats & Clés
+*.crt
+*.cer
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Build & Test
+out/
+coverage/
+.nyc_output/
+
+# Fichiers système & Éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
