@@ -16,10 +16,12 @@ export function TiltGlassCard({
   children,
   className = "",
   index = 0,
+  enterWithGsap = false,
 }: {
   children: ReactNode;
   className?: string;
   index?: number;
+  enterWithGsap?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
@@ -49,8 +51,8 @@ export function TiltGlassCard({
     <motion.div
       ref={ref}
       className={`h-full perspective-[1200px] ${className}`}
-      initial={{ opacity: 0, rotateX: 24, y: 80 }}
-      animate={inView ? { opacity: 1, rotateX: 0, y: 0 } : undefined}
+      initial={enterWithGsap ? false : { opacity: 0, rotateX: 24, y: 80 }}
+      animate={enterWithGsap ? undefined : inView ? { opacity: 1, rotateX: 0, y: 0 } : undefined}
       transition={{ ...cardSpring, delay: index * 0.11 }}
     >
       <motion.div

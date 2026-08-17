@@ -41,6 +41,26 @@ export function HeroSection({ title }: { title: ReactNode }) {
 
   return (
     <section className="relative overflow-hidden pb-24 pt-28 md:pt-36" id="hero">
+      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(90deg, #FBF8F4 0%, rgba(251, 248, 244, 0.94) 58%, rgba(251, 248, 244, 0.55) 82%, transparent 100%),
+              radial-gradient(ellipse 50% 40% at 92% 78%, rgba(132, 175, 251, 0.16) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 30% at 100% 0%, rgba(2, 89, 221, 0.05) 0%, transparent 60%)
+            `,
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")",
+            backgroundSize: "180px 180px",
+          }}
+        />
+      </div>
       <div className="container relative z-10 mx-auto max-w-6xl px-6">
         <div className="max-w-5xl">
           <motion.div
@@ -54,12 +74,7 @@ export function HeroSection({ title }: { title: ReactNode }) {
 
           {title}
 
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-8 max-w-3xl text-lg text-text-secondary md:text-xl"
-          >
+          <p className="hero-lead mt-8 max-w-3xl text-lg text-text-secondary md:text-xl">
             {h.leadBefore}
             <strong>{h.leadStrong1}</strong>
             {h.leadMid}
@@ -69,7 +84,7 @@ export function HeroSection({ title }: { title: ReactNode }) {
             {h.leadZero}
             <strong>{h.leadStrong4}</strong>
             {h.leadEnd}
-          </motion.p>
+          </p>
 
           <motion.div
             initial={{ opacity: 0, y: 28 }}

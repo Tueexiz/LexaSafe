@@ -39,17 +39,11 @@ export function WebHeader() {
   const { t } = useI18n();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [active, setActive] = useState<NavId | null>(
-    pathname.startsWith("/createurs") ? "team" : pathname === "/" ? "home" : null
-  );
+  const [active, setActive] = useState<NavId | null>(pathname === "/" ? "home" : null);
   const [hover, setHover] = useState<NavId | null>(null);
   const highlighted = hover ?? active;
 
   useEffect(() => {
-    if (pathname.startsWith("/createurs")) {
-      setActive("team");
-      return;
-    }
     if (pathname !== "/") {
       setActive(null);
       return;
@@ -58,9 +52,11 @@ export function WebHeader() {
     const update = () => setActive(sectionInView());
     update();
     window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("lexasafe:scroll", update);
     window.addEventListener("hashchange", update);
     return () => {
       window.removeEventListener("scroll", update);
+      window.removeEventListener("lexasafe:scroll", update);
       window.removeEventListener("hashchange", update);
     };
   }, [pathname]);
@@ -68,7 +64,7 @@ export function WebHeader() {
   const links: { id: NavId; href: string; label: string }[] = [
     { id: "home", href: "/", label: t.nav.home },
     { id: "simulator", href: "/#calculator", label: t.nav.simulator },
-    { id: "team", href: "/createurs", label: t.nav.team },
+    { id: "team", href: "/#creators", label: t.nav.team },
   ];
 
   return (

@@ -10,7 +10,7 @@ export async function SiteFooter() {
     { href: "/acces", label: f.access },
     { href: "/#calculator", label: f.simulator },
     { href: "/#tarifs", label: f.pricing },
-    { href: "/createurs", label: f.team },
+    { href: "/#creators", label: f.team },
     { href: "/#faq", label: f.faq },
   ];
 

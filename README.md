@@ -46,10 +46,15 @@ cp ../.env.example .env  # Configurer secrets
 docker compose up -d
 ```
 
-## Comptes démo
+## Comptes démo (laboratoire)
 
-- OPJ: `officier.aurelien@interieur.gouv.fr` / `SecuredPass2026!` — A2F: `123456`
-- DPO: `dpo@entreprise.fr` / `SecuredPass2026!` — A2F: `123456`
+Mots de passe stockés en Argon2id. Aucun code A2F universel (`894201` / `123456` retirés).
+
+- OPJ: `officier.aurelien@interieur.gouv.fr` / `SecuredPass2026!`
+- DPO: `dpo.martin@paytech.fr` / `SecuredPass2026!`
+- SecOps: `admin.secops@lexasafe.fr` / `SecOpsMaster2026!`
+
+Première connexion : enrollment TOTP (QR à scanner avec Aegis ou FreeOTP). Les mots de passe démo restent connus jusqu’à changement par l’opérateur.
 
 ## Checklist QA
 

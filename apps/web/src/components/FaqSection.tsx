@@ -13,7 +13,7 @@ export async function FaqSection() {
             <span className="mb-5 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
               {t.faq.badge}
             </span>
-            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-4xl">{t.faq.title}</h2>
+            <h2 className="gsap-copy font-display text-3xl font-extrabold text-blue-navy md:text-4xl">{t.faq.title}</h2>
           </div>
         </FadeUp>
         <FAQAccordion items={[...t.faq.items]} />

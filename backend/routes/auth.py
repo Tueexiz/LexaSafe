@@ -1,27 +1,34 @@
 """
 LEXASAFE FRANCE - AUTHENTIFICATION FORTE & GESTION DES SESSIONS
-A2F / TOTP • JWT Souverain • Contrôle d'Accès Basé sur les Rôles (RBAC)
+A2F / TOTP RFC 6238 • JWT Souverain • Contrôle d'Accès Basé sur les Rôles (RBAC)
 """
 
-import time
 import uuid
 from typing import Optional, Dict, Any
-from fastapi import APIRouter, HTTPException, Request, Response, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel, EmailStr, Field
 
-from config import settings
-from db import local_db, is_postgres_active, pg_pool
+from config import is_production
+from db import get_user_by_email, get_user_by_id, persist_totp_secret, upsert_local_user
 from security import (
     verify_password,
+    hash_password,
     create_session_token,
     verify_session_token,
-    validate_opj_professional_email
+    generate_totp_secret_base32,
+    totp_secret_to_bytes,
+    verify_totp_code,
+    build_otpauth_uri,
+)
+from services.phone import (
+    store_a2f_challenge,
+    get_a2f_challenge,
+    delete_a2f_challenge,
+    RedisUnavailableError,
+    A2F_CHALLENGE_TTL,
 )
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
-
-# Stockage des challenges A2F temporaires en mémoire (expire après 5 minutes)
-ACTIVE_CHALLENGES: Dict[str, Dict[str, Any]] = {}
 
 
 class LoginRequest(BaseModel):
@@ -35,117 +42,138 @@ class A2FVerifyRequest(BaseModel):
     totp_code: str = Field(..., min_length=6, max_length=8)
 
 
-class RegisterOPJRequest(BaseModel):
-    nom: str = Field(..., min_length=2, max_length=100)
-    prenom: str = Field(..., min_length=2, max_length=100)
-    email: EmailStr
-    matricule: str = Field(..., min_length=3, max_length=50)
-    unite: str = Field(..., min_length=2, max_length=200)
-    grade: str = Field(..., min_length=2, max_length=100)
-    telephone: str = Field(..., max_length=20)
-
-
 def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any]:
     """Extrait et vérifie le token JWT de session dans les en-têtes."""
     if not authorization:
         raise HTTPException(status_code=401, detail="Session non authentifiée (En-tête Authorization manquant)")
-    
+
     token = authorization.replace("Bearer ", "").strip()
     payload = verify_session_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Session expirée ou certificat invalide")
-    
+
     return payload
 
 
+def _redis_unavailable() -> HTTPException:
+    return HTTPException(
+        status_code=503,
+        detail="Service d'authentification temporairement indisponible",
+    )
+
+
 @router.post("/login")
-async def login(req: LoginRequest, request: Request):
+async def login(req: LoginRequest):
     """
-    Étape 1 : Vérifie le mot de passe et génère un challenge A2F.
-    Comptes de test pré-configurés :
-    - OPJ : officier.aurelien@interieur.gouv.fr (mdp: SecuredPass2026!)
-    - DPO Entreprise : dpo.martin@paytech.fr (mdp: SecuredPass2026!)
-    - SecOps : admin.secops@lexasafe.fr (mdp: SecOpsMaster2026!)
+    Étape 1 : vérifie le mot de passe Argon2id et ouvre un challenge A2F TOTP (TTL 300s).
     """
     email = req.email.strip().lower()
-    
-    # 1. Vérification dans la base locale ou Postgres
-    user = local_db["users"].get(email)
-    if not user:
-        # Fallback pour créer un compte à la volée en mode test local
-        if email.endswith(".gouv.fr"):
-            user = {
-                "id": f"usr-opj-{uuid.uuid4().hex[:6]}",
-                "email": email,
-                "name": f"Officier ({email.split('@')[0]})",
-                "role": "opj_investigator",
-                "service": "Police Nationale / Gendarmerie",
-                "password": req.password,
-                "is_verified": True,
-                "otp_code": "894201"
-            }
-            local_db["users"][email] = user
-        else:
-            raise HTTPException(status_code=401, detail="Identifiant ou mot de passe incorrect")
+    user = await get_user_by_email(email)
 
-    if user["password"] != req.password and not verify_password(user["password"], req.password):
+    if not user:
+        # Laboratoire uniquement : seed OPJ @*.gouv.fr hashé + TOTP à enroller.
+        # Interdit en production (pas de compte à la volée, pas de mot de passe en clair).
+        if is_production() or not email.endswith(".gouv.fr"):
+            raise HTTPException(status_code=401, detail="Identifiant ou mot de passe incorrect")
+        user = {
+            "id": f"usr-opj-{uuid.uuid4().hex[:6]}",
+            "email": email,
+            "name": f"Officier ({email.split('@')[0]})",
+            "role": "opj_investigator",
+            "service": "Police Nationale / Gendarmerie",
+            "password": hash_password(req.password),
+            "is_verified": True,
+            "totp_secret": "",
+        }
+        upsert_local_user(user)
+
+    if not verify_password(user.get("password", ""), req.password):
         raise HTTPException(status_code=401, detail="Identifiant ou mot de passe incorrect")
 
-    # 2. Générer le challenge A2F
-    challenge_id = f"chl_{uuid.uuid4().hex}"
-    ACTIVE_CHALLENGES[challenge_id] = {
-        "user_id": user["id"],
-        "email": user["email"],
-        "role": user["role"],
-        "otp_code": user.get("otp_code", "894201"),
-        "created_at": time.time()
-    }
+    enroll = False
+    otpauth_uri = None
+    totp_secret = (user.get("totp_secret") or "").strip()
+    if not totp_secret:
+        totp_secret = generate_totp_secret_base32()
+        await persist_totp_secret(user, totp_secret)
+        enroll = True
+        otpauth_uri = build_otpauth_uri(email, totp_secret)
 
-    return {
+    challenge_id = f"chl_{uuid.uuid4().hex}"
+    try:
+        await store_a2f_challenge(
+            challenge_id,
+            {
+                "user_id": user["id"],
+                "email": user["email"],
+                "role": user["role"],
+                "enroll": enroll,
+            },
+            ttl=A2F_CHALLENGE_TTL,
+        )
+    except RedisUnavailableError:
+        raise _redis_unavailable()
+
+    payload: Dict[str, Any] = {
         "status": "a2f_required",
         "challenge_id": challenge_id,
-        "role": user["role"],
-        "message": "Mot de passe validé. Veuillez renseigner votre second facteur (A2F / TOTP)."
     }
+    if enroll:
+        payload["enroll"] = True
+        payload["otpauth_uri"] = otpauth_uri
+    return payload
 
 
 @router.post("/verify-2fa")
 async def verify_2fa(req: A2FVerifyRequest):
     """
-    Étape 2 : Vérifie le code à 6 chiffres A2F / TOTP et délivre le token de session JWT.
-    Code universel de démonstration : 894201
+    Étape 2 : vérifie le TOTP RFC 6238 du challenge Redis (usage unique) puis délivre le JWT.
     """
-    challenge = ACTIVE_CHALLENGES.get(req.challenge_id)
-    if not challenge:
-        # Si challenge_id direct pour test
-        challenge = {
-            "user_id": "usr-direct-test",
-            "email": "officier.aurelien@interieur.gouv.fr",
-            "role": "opj_investigator"
-        }
+    try:
+        challenge = await get_a2f_challenge(req.challenge_id)
+    except RedisUnavailableError:
+        raise _redis_unavailable()
 
-    # Nettoyage du code
-    code = req.totp_code.replace(" ", "").strip()
-    if code != "894201" and code != challenge.get("otp_code"):
+    if not challenge:
+        raise HTTPException(status_code=400, detail="Challenge A2F invalide ou expiré")
+
+    user = await get_user_by_id(str(challenge.get("user_id", "")))
+    if not user:
+        user = await get_user_by_email(str(challenge.get("email", "")))
+    if not user:
+        raise HTTPException(status_code=400, detail="Challenge A2F invalide ou expiré")
+
+    totp_secret = (user.get("totp_secret") or "").strip()
+    if not totp_secret:
         raise HTTPException(status_code=400, detail="Code A2F invalide ou expiré")
 
-    # Création du token JWT souverain
+    code = req.totp_code.replace(" ", "").strip()
+    try:
+        secret_bytes = totp_secret_to_bytes(totp_secret)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Code A2F invalide ou expiré")
+
+    if not verify_totp_code(secret_bytes, code):
+        raise HTTPException(status_code=400, detail="Code A2F invalide ou expiré")
+
+    try:
+        await delete_a2f_challenge(req.challenge_id)
+    except RedisUnavailableError:
+        raise _redis_unavailable()
+
     user_payload = {
-        "sub": challenge["user_id"],
-        "email": challenge["email"],
-        "role": challenge["role"]
+        "sub": user["id"],
+        "email": user["email"],
+        "role": user["role"],
     }
     token = create_session_token(user_payload, expires_in_seconds=86400)
-
-    # Nettoyer challenge
-    ACTIVE_CHALLENGES.pop(req.challenge_id, None)
 
     return {
         "status": "authenticated",
         "access_token": token,
         "token_type": "Bearer",
         "expires_in": 86400,
-        "user": user_payload
+        "user": user_payload,
     }
 
 
@@ -153,11 +181,15 @@ async def verify_2fa(req: A2FVerifyRequest):
 async def get_me(user: Dict[str, Any] = Depends(get_current_user)):
     """Renvoie les informations de session de l'utilisateur connecté."""
     email = user.get("email")
-    user_info = local_db["users"].get(email, user)
+    user_info = await get_user_by_email(email) if email else None
+    if user_info:
+        safe = {k: v for k, v in user_info.items() if k not in {"password", "totp_secret"}}
+    else:
+        safe = user
     return {
-        "user": user_info,
+        "user": safe,
         "auth_status": "active_session",
-        "secnumcloud_status": "verified"
+        "secnumcloud_status": "verified",
     }
 
 

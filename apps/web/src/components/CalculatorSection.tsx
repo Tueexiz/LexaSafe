@@ -36,7 +36,8 @@ export function CalculatorSection() {
   const formatMoney = (n: number) => formatEur(n, numberLocale);
 
   return (
-    <section className="relative overflow-hidden py-24" id="calculator">
+    <section className="relative py-24" id="calculator">
+      <div className="relative">
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
@@ -64,14 +65,14 @@ export function CalculatorSection() {
             <span className="mb-5 inline-block rounded-pill border border-white/70 bg-white/50 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary shadow-[0_8px_24px_rgba(132,175,251,0.18)] backdrop-blur-md">
               {c.badge}
             </span>
-            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-4xl">{c.title}</h2>
-            <p className="mt-4 text-lg text-text-secondary">{c.subtitle}</p>
+            <h2 className="gsap-copy font-display text-3xl font-extrabold text-blue-navy md:text-4xl">{c.title}</h2>
+            <p className="gsap-copy mt-4 text-lg text-text-secondary">{c.subtitle}</p>
           </div>
         </FadeUp>
 
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-8">
           <FadeUp index={1}>
-            <div className={`${glassPanel} p-7 sm:p-9`}>
+            <div className={`calc-panel ${glassPanel} p-7 sm:p-9`}>
               <div className="space-y-10">
                 <div>
                   <div className="mb-4 flex items-baseline justify-between gap-4 text-sm font-semibold text-blue-navy">
@@ -119,7 +120,7 @@ export function CalculatorSection() {
           </FadeUp>
 
           <FadeUp index={2}>
-            <div className="relative md:-translate-y-2">
+            <div className="calc-panel relative md:-translate-y-2">
               <div
                 className="pointer-events-none absolute -inset-8 rounded-[3rem] bg-[#84AFFB]/20 blur-3xl"
                 aria-hidden="true"
@@ -164,6 +165,7 @@ export function CalculatorSection() {
             </div>
           </FadeUp>
         </div>
+      </div>
       </div>
     </section>
   );

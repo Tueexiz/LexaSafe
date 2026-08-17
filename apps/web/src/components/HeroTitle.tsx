@@ -4,7 +4,7 @@ import { messages } from "@/i18n/messages";
 export async function HeroTitle() {
   const locale = await getLocale();
   const { lines, aria } = messages[locale].hero;
-  let wordIndex = 0;
+  let charIndex = 0;
 
   return (
     <h1
@@ -14,17 +14,23 @@ export async function HeroTitle() {
       {lines.map((line, lineIdx) => (
         <span key={lineIdx} className="block">
           {line.words.map((word, i) => {
-            const idx = wordIndex++;
             const isAccent = line.accent === i;
             return (
-              <span key={`${word}-${i}`} className="hero-title-mask inline-block overflow-hidden align-bottom">
-                <span
-                  className={`hero-title-word inline-block text-[length:inherit] leading-[inherit] ${isAccent ? "text-[#0259DD]" : ""}`}
-                  style={{ animationDelay: `${0.35 + idx * 0.075}s` }}
-                >
-                  {word}
-                  {i < line.words.length - 1 ? "\u00A0" : ""}
-                </span>
+              <span
+                key={`${word}-${i}`}
+                className={`hero-title-word inline-block overflow-hidden align-bottom ${isAccent ? "text-[#0259DD]" : ""}`}
+              >
+                {Array.from(word).map((char, ci) => {
+                  const delay = `${0.28 + charIndex++ * 0.028}s`;
+                  return (
+                    <span key={`${char}-${ci}`} className="hero-title-mask inline-block overflow-hidden align-bottom">
+                      <span className="hero-title-char inline-block will-change-transform" style={{ animationDelay: delay }}>
+                        {char}
+                      </span>
+                    </span>
+                  );
+                })}
+                {i < line.words.length - 1 ? "\u00A0" : ""}
               </span>
             );
           })}

@@ -10,6 +10,7 @@ import time
 import uuid
 from typing import Any, Dict, List, Optional
 from config import settings
+from security import hash_password
 
 # Variable globale pour stocker le pool Postgres s'il est actif
 pg_pool = None
@@ -54,17 +55,17 @@ def seed_local_db():
         "created_at": "2026-02-01T09:30:00Z"
     }
 
-    # 2. Utilisateurs
+    # 2. Utilisateurs (mots de passe Argon2id, TOTP enrollé au premier login)
     local_db["users"]["officier.aurelien@interieur.gouv.fr"] = {
         "id": "usr-opj-001",
         "email": "officier.aurelien@interieur.gouv.fr",
         "name": "Capitaine Aurélien V.",
         "role": "opj_investigator",
         "service": "Police Nationale - DTPJ Marseille",
-        "password": "SecuredPass2026!",
+        "password": hash_password("SecuredPass2026!"),
         "is_verified": True,
         "pki_serial": "AGENT-PN-2026-889104-FR",
-        "otp_code": "894201"
+        "totp_secret": "",
     }
 
     local_db["users"]["dpo.martin@paytech.fr"] = {
@@ -73,9 +74,9 @@ def seed_local_db():
         "name": "Martin DUPUIS (Head of Legal & DPO)",
         "organization_id": org_paytech_id,
         "role": "dpo_enterprise",
-        "password": "SecuredPass2026!",
+        "password": hash_password("SecuredPass2026!"),
         "is_verified": True,
-        "otp_code": "894201"
+        "totp_secret": "",
     }
 
     local_db["users"]["admin.secops@lexasafe.fr"] = {
@@ -83,9 +84,9 @@ def seed_local_db():
         "email": "admin.secops@lexasafe.fr",
         "name": "Alexandre (SecOps / Certifications)",
         "role": "super_admin",
-        "password": "SecOpsMaster2026!",
+        "password": hash_password("SecOpsMaster2026!"),
         "is_verified": True,
-        "otp_code": "894201"
+        "totp_secret": "",
     }
 
     # 3. Réquisitions
@@ -175,3 +176,99 @@ async def close_db():
     if pg_pool:
         await pg_pool.close()
         print("[DB] Pool PostgreSQL fermé proprement")
+
+
+def _row_to_user(row: Any) -> Dict[str, Any]:
+    totp_raw = row["totp_secret_encrypted"]
+    if totp_raw is None:
+        totp_secret = ""
+    elif isinstance(totp_raw, (bytes, bytearray, memoryview)):
+        totp_secret = bytes(totp_raw).decode("utf-8", errors="ignore")
+    else:
+        totp_secret = str(totp_raw)
+    return {
+        "id": str(row["id"]),
+        "email": row["email"],
+        "name": row["email"],
+        "role": row["role"],
+        "password": row["password_hash"],
+        "totp_secret": totp_secret,
+        "is_verified": True,
+        "organization_id": str(row["organization_id"]) if row["organization_id"] else None,
+    }
+
+
+def _find_local_user_by_id(user_id: str) -> Optional[Dict[str, Any]]:
+    for user in local_db["users"].values():
+        if user.get("id") == user_id:
+            return user
+    return None
+
+
+async def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
+    """Lookup Postgres puis base locale."""
+    normalized = email.strip().lower()
+    if is_postgres_active and pg_pool:
+        try:
+            row = await pg_pool.fetchrow(
+                """
+                SELECT id, email, password_hash, role, totp_secret_encrypted, organization_id
+                FROM users
+                WHERE lower(email) = $1
+                """,
+                normalized,
+            )
+            if row:
+                return _row_to_user(row)
+        except Exception as exc:
+            print(f"[DB] Lecture utilisateur Postgres impossible ({exc}) -> fallback local")
+    return local_db["users"].get(normalized)
+
+
+async def get_user_by_id(user_id: str) -> Optional[Dict[str, Any]]:
+    if is_postgres_active and pg_pool:
+        try:
+            row = await pg_pool.fetchrow(
+                """
+                SELECT id, email, password_hash, role, totp_secret_encrypted, organization_id
+                FROM users
+                WHERE id::text = $1
+                """,
+                str(user_id),
+            )
+            if row:
+                return _row_to_user(row)
+        except Exception as exc:
+            print(f"[DB] Lecture utilisateur Postgres par id impossible ({exc}) -> fallback local")
+    return _find_local_user_by_id(user_id)
+
+
+async def persist_totp_secret(user: Dict[str, Any], secret_b32: str) -> None:
+    """Persiste le secret TOTP (enroll) en local et, si possible, en Postgres."""
+    user["totp_secret"] = secret_b32
+    email = str(user.get("email", "")).strip().lower()
+    if email and email in local_db["users"]:
+        local_db["users"][email]["totp_secret"] = secret_b32
+    elif email:
+        local_db["users"][email] = user
+
+    if is_postgres_active and pg_pool:
+        try:
+            await pg_pool.execute(
+                """
+                UPDATE users
+                SET totp_secret_encrypted = convert_to($1, 'UTF8')
+                WHERE id::text = $2 OR lower(email) = $3
+                """,
+                secret_b32,
+                str(user.get("id", "")),
+                email,
+            )
+        except Exception as exc:
+            print(f"[DB] Mise à jour TOTP Postgres impossible ({exc})")
+
+
+def upsert_local_user(user: Dict[str, Any]) -> None:
+    email = str(user.get("email", "")).strip().lower()
+    if email:
+        local_db["users"][email] = user

@@ -4,6 +4,8 @@ import "./globals.css";
 import { clashDisplay, generalSans, syne } from "@/lib/fonts";
 import { getLocale } from "@/i18n/server";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { SmoothScroll } from "@lexasafe/motion";
+import { LenisScrollBridge } from "@/components/LenisScrollBridge";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lexasafe.fr"),
@@ -34,7 +36,12 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={syne.variable}>
       <body className={`${clashDisplay.variable} ${generalSans.variable} font-body antialiased`}>
-        <I18nProvider initialLocale={locale}>{children}</I18nProvider>
+        <I18nProvider initialLocale={locale}>
+          <SmoothScroll>
+            <LenisScrollBridge />
+            {children}
+          </SmoothScroll>
+        </I18nProvider>
       </body>
     </html>
   );

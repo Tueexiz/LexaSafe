@@ -15,7 +15,6 @@ User-agent: *
 Allow: /
 Allow: /index.html
 Allow: /demo.html
-Allow: /createurs.html
 Allow: /404.html
 
 # Zones Sécurisées & Espaces Restreints

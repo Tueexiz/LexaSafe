@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { setLenisInstance, type LenisLike } from "./lenis-store";
+import "lenis/dist/lenis.css";
 
 export function SmoothScroll({ children }: { children: ReactNode }) {
-  const lenisRef = useRef<{ destroy: () => void; raf: (time: number) => void } | null>(null);
+  const lenisRef = useRef<LenisLike | null>(null);
   const rafRef = useRef(0);
 
   useEffect(() => {
@@ -11,17 +13,26 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!finePointer || prefersReduced) return;
 
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = "auto";
+
     let cancelled = false;
 
     import("lenis").then(({ default: Lenis }) => {
       if (cancelled) return;
       const lenis = new Lenis({
-        duration: 1.15,
+        lerp: 0.16,
+        duration: 0.62,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 1.4,
+        touchMultiplier: 1.2,
       });
-      lenisRef.current = lenis;
+      lenisRef.current = lenis as unknown as LenisLike;
+      setLenisInstance(lenis as unknown as LenisLike);
+
+      lenis.on("scroll", () => {
+        window.dispatchEvent(new Event("lexasafe:scroll"));
+      });
 
       const raf = (time: number) => {
         lenis.raf(time);
@@ -33,6 +44,8 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
       cancelAnimationFrame(rafRef.current);
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+      setLenisInstance(null);
       lenisRef.current?.destroy();
       lenisRef.current = null;
     };

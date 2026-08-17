@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, Building2, BadgeCheck, Lock, Smartphone } from "lucide-react";
 import { AmbientBackground, GlassCard } from "@lexasafe/ui";
 
@@ -19,6 +20,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [totp, setTotp] = useState("");
   const [challengeId, setChallengeId] = useState("");
+  const [otpauthUri, setOtpauthUri] = useState("");
+  const [enroll, setEnroll] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -40,6 +43,9 @@ export default function LoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Identifiants invalides");
       setChallengeId(data.challenge_id);
+      setEnroll(Boolean(data.enroll));
+      setOtpauthUri(typeof data.otpauth_uri === "string" ? data.otpauth_uri : "");
+      setTotp("");
       setStep(2);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion");
@@ -53,7 +59,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${API_URL}/api/auth/a2f/verify`, {
+      const res = await fetch(`${API_URL}/api/auth/verify-2fa`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -61,7 +67,17 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ?? "Code A2F invalide");
-      const dest = role === "enterprise" ? `${APP_URL}/entreprise` : `${APP_URL}/dashboard`;
+      if (data.access_token) {
+        localStorage.setItem("lexasafe_token", data.access_token);
+        localStorage.setItem("lexasafe_user", JSON.stringify(data.user ?? {}));
+      }
+      const apiRole = data.user?.role as string | undefined;
+      const dest =
+        apiRole === "super_admin"
+          ? `${APP_URL}/admin/checklist`
+          : apiRole === "dpo_enterprise" || role === "enterprise"
+            ? `${APP_URL}/entreprise`
+            : `${APP_URL}/dashboard`;
       router.push(dest);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur A2F");
@@ -204,9 +220,24 @@ export default function LoginPage() {
                 <p className="text-sm font-semibold text-emerald-valid">
                   Authentification A2F obligatoire
                 </p>
-                <p className="mt-1 text-sm text-text-secondary">
-                  Entrez le code TOTP de votre application authenticator
-                </p>
+                {enroll && otpauthUri ? (
+                  <div className="mt-4 space-y-3">
+                    <p className="text-sm text-text-secondary">
+                      Première connexion : scannez ce QR avec <strong>Aegis</strong> ou{" "}
+                      <strong>FreeOTP</strong>, puis saisissez le code à 6 chiffres.
+                    </p>
+                    <div className="flex justify-center rounded-lg border border-border-medium bg-white p-4">
+                      <QRCodeSVG value={otpauthUri} size={192} level="M" />
+                    </div>
+                    <p className="break-all rounded-lg bg-bg-blue-tint px-3 py-2 text-left font-mono text-[11px] leading-relaxed text-blue-navy">
+                      {otpauthUri}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="mt-1 text-sm text-text-secondary">
+                    Entrez le code TOTP de votre application authenticator (Aegis / FreeOTP).
+                  </p>
+                )}
               </div>
               <input
                 id="totp"
@@ -233,7 +264,12 @@ export default function LoginPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setStep(1);
+                  setOtpauthUri("");
+                  setEnroll(false);
+                  setTotp("");
+                }}
                 className="w-full text-sm text-text-muted hover:text-blue-primary"
               >
                 ← Retour

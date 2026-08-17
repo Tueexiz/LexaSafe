@@ -18,7 +18,7 @@ export function AdvantagesSection() {
             <span className="mb-6 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
               {a.badge}
             </span>
-            <h2 className="font-display text-4xl font-extrabold tracking-tight text-blue-navy md:text-6xl">
+            <h2 className="gsap-copy font-display text-4xl font-extrabold tracking-tight text-blue-navy md:text-6xl">
               {a.title}
             </h2>
           </div>
@@ -28,7 +28,7 @@ export function AdvantagesSection() {
           {a.items.map((item, i) => {
             const Icon = icons[i] ?? ShieldCheck;
             return (
-              <TiltGlassCard key={item.title} index={i}>
+              <TiltGlassCard key={item.title} index={i} className="adv-card" enterWithGsap>
                 <div className="flex flex-col gap-4">
                   <TiltCardItem>
                     <Icon className={`h-14 w-14 ${iconClass[i]}`} strokeWidth={1.5} />
@@ -68,12 +68,12 @@ export function WorkflowSection() {
             <span className="mb-5 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
               {w.badge}
             </span>
-            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-5xl">{w.title}</h2>
+            <h2 className="gsap-copy font-display text-3xl font-extrabold text-blue-navy md:text-5xl">{w.title}</h2>
           </div>
         </FadeUp>
         <div className="grid gap-5 md:grid-cols-3">
           {w.steps.map((s, i) => (
-            <TiltGlassCard key={s.title} index={i}>
+            <TiltGlassCard key={s.title} index={i} className="wf-step" enterWithGsap>
               <TiltCardItem>
                 <div
                   className={`mb-5 flex h-12 w-12 items-center justify-center rounded-lg text-lg font-extrabold ${badgeClass[i]}`}

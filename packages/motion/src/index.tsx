@@ -157,8 +157,9 @@ export function AnimatedNumber({
 
 export { CustomCursor } from "./CustomCursor";
 export { SmoothScroll } from "./SmoothScroll";
+export { getLenisInstance, subscribeLenis, type LenisLike } from "./lenis-store";
 export { TextReveal, TextRevealBlock, HeroTitleReveal } from "./TextReveal";
 export { ShineMagneticButton } from "./ShineMagneticButton";
 export { TiltGlassCard, TiltCardItem } from "./TiltGlassCard";
 export { useMediaCapabilities } from "./useMediaCapabilities";
-export { motion, AnimatePresence } from "framer-motion";
+export { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";

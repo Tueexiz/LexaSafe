@@ -17,6 +17,7 @@ from security import (
     validate_siren_siret,
     verify_session_token,
     is_admin_vpn_authorized,
+    hash_password,
 )
 from services.phone import rate_limit
 from services.registration_store import (
@@ -192,9 +193,9 @@ def _provision_account(record: Dict[str, Any]) -> Dict[str, Any]:
             "role": "opj_investigator",
             "service": payload.get("unite", ""),
             "matricule": payload.get("matricule", ""),
-            "password": "SecuredPass2026!",
+            "password": hash_password("SecuredPass2026!"),
             "is_verified": True,
-            "otp_code": "894201",
+            "totp_secret": "",
         }
         return {"user_id": user_id, "email": email, "role": "opj_investigator"}
 
@@ -217,9 +218,9 @@ def _provision_account(record: Dict[str, Any]) -> Dict[str, Any]:
         "name": f"{payload.get('contact_nom', '')} ({payload.get('contact_fonction', '')})".strip(),
         "organization_id": org_id,
         "role": "dpo_enterprise",
-        "password": "SecuredPass2026!",
+        "password": hash_password("SecuredPass2026!"),
         "is_verified": True,
-        "otp_code": "894201",
+        "totp_secret": "",
     }
     return {"user_id": user_id, "email": email, "organization_id": org_id, "role": "dpo_enterprise"}
 

@@ -10,6 +10,7 @@ __pycache__/
 *.pyc
 .venv/
 infra/secrets/
+infra/secrets/demo_totp.txt
 *.pem
 *.key
 

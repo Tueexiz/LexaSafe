@@ -1,19 +1,46 @@
+import json
 import secrets
 import time
+from typing import Any
+
 import redis.asyncio as aioredis
-from config import settings
+from config import is_production, settings
 
 _redis: aioredis.Redis | None = None
+_redis_down_until: float = 0.0
 
 # Fallback in-memory (dev local sans Redis) — évite tout crash si Redis absent.
 _mem_counters: dict[str, tuple[int, float]] = {}
 _mem_kv: dict[str, tuple[str, float]] = {}
 
 
+class RedisUnavailableError(Exception):
+    """Redis injoignable — fail-closed en production."""
+
+
+A2F_CHALLENGE_PREFIX = "a2f_challenge:"
+A2F_CHALLENGE_TTL = 300
+
+
+def _mark_redis_down() -> None:
+    global _redis_down_until
+    if not is_production():
+        _redis_down_until = time.time() + 30
+
+
+def _dev_memory_only() -> bool:
+    return (not is_production()) and time.time() < _redis_down_until
+
+
 async def get_redis() -> aioredis.Redis:
     global _redis
     if not _redis:
-        _redis = aioredis.from_url(settings.redis_url, decode_responses=True)
+        _redis = aioredis.from_url(
+            settings.redis_url,
+            decode_responses=True,
+            socket_connect_timeout=2,
+            socket_timeout=2,
+        )
     return _redis
 
 
@@ -29,6 +56,8 @@ def _mem_rate_limit(key: str, limit: int, window: int) -> bool:
 
 async def rate_limit(key: str, limit: int, window: int) -> bool:
     """Returns True if allowed, False if rate limited. Bascule en mémoire si Redis indisponible."""
+    if _dev_memory_only():
+        return _mem_rate_limit(key, limit, window)
     try:
         r = await get_redis()
         current = await r.incr(key)
@@ -41,22 +70,78 @@ async def rate_limit(key: str, limit: int, window: int) -> bool:
             return False
         return True
     except Exception:
+        _mark_redis_down()
         return _mem_rate_limit(key, limit, window)
 
 
-async def store_a2f_challenge(challenge_id: str, user_id: str, ttl: int = 300):
-    r = await get_redis()
-    await r.setex(f"a2f:{challenge_id}", ttl, user_id)
+def _mem_get(key: str) -> str | None:
+    entry = _mem_kv.get(key)
+    if not entry:
+        return None
+    value, expires_at = entry
+    if time.time() > expires_at:
+        _mem_kv.pop(key, None)
+        return None
+    return value
 
 
-async def get_a2f_user(challenge_id: str) -> str | None:
-    r = await get_redis()
-    return await r.get(f"a2f:{challenge_id}")
+async def store_a2f_challenge(
+    challenge_id: str,
+    payload: dict[str, Any],
+    ttl: int = A2F_CHALLENGE_TTL,
+) -> None:
+    """Stocke le challenge A2F : Redis obligatoire en prod, mémoire TTL en dev."""
+    key = f"{A2F_CHALLENGE_PREFIX}{challenge_id}"
+    raw = json.dumps(payload)
+    if _dev_memory_only():
+        _mem_kv[key] = (raw, time.time() + ttl)
+        return
+    try:
+        r = await get_redis()
+        await r.setex(key, ttl, raw)
+    except Exception as exc:
+        if is_production():
+            raise RedisUnavailableError("Redis indisponible") from exc
+        _mark_redis_down()
+        _mem_kv[key] = (raw, time.time() + ttl)
 
 
-async def delete_a2f_challenge(challenge_id: str):
-    r = await get_redis()
-    await r.delete(f"a2f:{challenge_id}")
+async def get_a2f_challenge(challenge_id: str) -> dict[str, Any] | None:
+    key = f"{A2F_CHALLENGE_PREFIX}{challenge_id}"
+    raw: str | None
+    if _dev_memory_only():
+        raw = _mem_get(key)
+    else:
+        try:
+            r = await get_redis()
+            raw = await r.get(key)
+        except Exception as exc:
+            if is_production():
+                raise RedisUnavailableError("Redis indisponible") from exc
+            _mark_redis_down()
+            raw = _mem_get(key)
+    if not raw:
+        return None
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    return data if isinstance(data, dict) else None
+
+
+async def delete_a2f_challenge(challenge_id: str) -> None:
+    key = f"{A2F_CHALLENGE_PREFIX}{challenge_id}"
+    if _dev_memory_only():
+        _mem_kv.pop(key, None)
+        return
+    try:
+        r = await get_redis()
+        await r.delete(key)
+    except Exception as exc:
+        if is_production():
+            raise RedisUnavailableError("Redis indisponible") from exc
+        _mark_redis_down()
+        _mem_kv.pop(key, None)
 
 
 async def store_phone_otp(phone: str, otp: str, ttl: int = 300):

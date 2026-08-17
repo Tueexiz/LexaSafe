@@ -121,12 +121,13 @@
               </div>
               <h3 style="font-size:1.15rem; margin-bottom:0.25rem; color:var(--blue-navy);">Validation du Second Facteur (A2F)</h3>
               <p style="font-size:0.85rem; color:var(--text-secondary);" id="a2f-prompt-text">
-                Entrez le code à 6 chiffres généré par votre application d'authentification ou reçu par SMS.
+                Scannez le QR avec Aegis ou FreeOTP (première connexion), puis entrez le code TOTP à 6 chiffres.
               </p>
+              <pre id="otpauth-uri" style="display:none; margin-top:0.75rem; padding:0.75rem; background:#f1f5f9; border-radius:8px; font-size:0.7rem; word-break:break-all; text-align:left;"></pre>
             </div>
 
             <div class="form-group" style="text-align:center;">
-              <input type="text" id="a2f-code" class="form-input" placeholder="000 000" maxlength="6" style="font-family:monospace; font-size:1.5rem; text-align:center; letter-spacing:0.3em; width:200px; margin-inline:auto; font-weight:700; color:var(--blue-navy);" value="894201" required>
+              <input type="text" id="a2f-code" class="form-input" placeholder="000 000" maxlength="6" style="font-family:monospace; font-size:1.5rem; text-align:center; letter-spacing:0.3em; width:200px; margin-inline:auto; font-weight:700; color:var(--blue-navy);" inputmode="numeric" autocomplete="one-time-code" required>
             </div>
 
             <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
@@ -223,6 +224,14 @@
             if (res.ok) {
               const data = await res.json();
               challengeId = data.challenge_id;
+              const uriEl = document.getElementById('otpauth-uri');
+              if (data.otpauth_uri && uriEl) {
+                uriEl.style.display = 'block';
+                uriEl.textContent = data.otpauth_uri;
+              } else if (uriEl) {
+                uriEl.style.display = 'none';
+                uriEl.textContent = '';
+              }
             }
           }
         } catch (err) {
@@ -243,7 +252,15 @@
 
       loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const otpCode = document.getElementById('a2f-code').value.trim() || '894201';
+        const otpCode = document.getElementById('a2f-code').value.trim();
+        if (!otpCode || otpCode.length < 6) {
+          alert('Saisissez le code TOTP à 6 chiffres.');
+          return;
+        }
+        if (!challengeId) {
+          alert('Challenge A2F manquant. Recommencez l’étape 1.');
+          return;
+        }
         
         try {
           if (API_BASE) {
@@ -251,7 +268,7 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                challenge_id: challengeId || 'chl_direct',
+                challenge_id: challengeId,
                 totp_code: otpCode
               })
             });

@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_env: str = "development"
+    app_env: str = os.getenv("APP_ENV", "development")
     app_name: str = "LexaSafe France - API Souveraine"
     app_version: str = "1.0.0"
     
@@ -42,6 +42,10 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def is_production() -> bool:
+    return settings.app_env.strip().lower() in {"production", "prod"}
 
 # Ensure directories exist
 os.makedirs(settings.upload_dir, exist_ok=True)

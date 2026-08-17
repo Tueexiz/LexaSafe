@@ -8,7 +8,7 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr, Field
 
-from security import validate_opj_professional_email
+from security import validate_opj_professional_email, hash_password
 from db import local_db
 
 router = APIRouter(prefix="/api/opj", tags=["opj"])
@@ -58,30 +58,31 @@ async def request_opj_access(req: OPJAccessRequest):
     Traite une demande de raccordement d'un Officier de Police Judiciaire ou Magistrat.
     Crée automatiquement le profil et délivre les identifiants de session chiffrés.
     """
-    if not validate_opj_professional_email(req.email):
+    email = str(req.email).strip().lower()
+    if not validate_opj_professional_email(email):
         raise HTTPException(
             status_code=400,
             detail="Le courriel doit obligatoirement appartenir au domaine officiel d'un ministère régalien français."
         )
 
     user_id = f"opj-{uuid.uuid4().hex[:6]}"
-    local_db["users"][req.email] = {
+    local_db["users"][email] = {
         "id": user_id,
-        "email": req.email,
+        "email": email,
         "name": f"{req.grade} {req.prenom} {req.nom}",
         "role": "opj_investigator",
         "service": req.unite,
         "matricule": req.matricule_agent,
-        "password": "SecuredPass2026!",
+        "password": hash_password("SecuredPass2026!"),
         "is_verified": True,
-        "otp_code": "894201",
+        "totp_secret": "",
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     }
 
     return {
         "status": "registered",
         "user_id": user_id,
-        "email": req.email,
+        "email": email,
         "pki_status": "CERTIFICATE_PENDING_ACTIVATION",
         "message": "Votre accès sécurisé gratuit a été généré. Un lien chiffré temporaire a été envoyé sur votre messagerie sécurisée."
     }

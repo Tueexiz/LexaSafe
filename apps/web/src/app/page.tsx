@@ -3,6 +3,7 @@ import { WebHeader } from "@/components/WebHeader";
 import { HeroSection } from "@/components/HeroSection";
 import { HeroTitle } from "@/components/HeroTitle";
 import { HomeShell } from "@/components/HomeShell";
+import { HomeScrollDirector } from "@/components/HomeScrollDirector";
 import { CreatorsSection } from "@/components/CreatorsSection";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FaqSection } from "@/components/FaqSection";
@@ -41,25 +42,28 @@ export default async function HomePage() {
   };
 
   return (
-    <HomeShell>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <WebHeader />
-      <main className="relative z-10">
-        <HeroSection title={<HeroTitle />} />
-        <WorkflowSection />
-        <AdvantagesSection />
-        <DangersSection />
-        <CalculatorSection />
-        <PricingSection />
-        <CreatorsSection />
-        <FaqSection />
-      </main>
-      <div className="relative z-10">
-        <SiteFooter />
-      </div>
-    </HomeShell>
+    <>
+      <HomeScrollDirector />
+      <HomeShell>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+        <WebHeader />
+        <main className="relative z-10">
+          <HeroSection title={<HeroTitle />} />
+          <WorkflowSection />
+          <AdvantagesSection />
+          <DangersSection />
+          <CalculatorSection />
+          <PricingSection />
+          <CreatorsSection />
+          <FaqSection />
+        </main>
+        <div className="relative z-10">
+          <SiteFooter />
+        </div>
+      </HomeShell>
+    </>
   );
 }

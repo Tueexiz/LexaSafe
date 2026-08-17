@@ -18,8 +18,8 @@ export function PricingSection() {
             <span className="mb-5 inline-block rounded-pill border border-blue-border bg-bg-blue-tint px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-primary">
               {p.badge}
             </span>
-            <h2 className="font-display text-3xl font-extrabold text-blue-navy md:text-4xl">{p.title}</h2>
-            <p className="mt-4 text-lg text-text-secondary">{p.subtitle}</p>
+            <h2 className="gsap-copy font-display text-3xl font-extrabold text-blue-navy md:text-4xl">{p.title}</h2>
+            <p className="gsap-copy mt-4 text-lg text-text-secondary">{p.subtitle}</p>
           </div>
         </FadeUp>
         <FadeUp index={1}>

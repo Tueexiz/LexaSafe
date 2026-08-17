@@ -9,19 +9,14 @@ const CustomCursor = dynamic(
   { ssr: false }
 );
 
-const SmoothScroll = dynamic(
-  () => import("@lexasafe/motion").then((m) => ({ default: m.SmoothScroll })),
-  { ssr: false }
-);
-
 export function MotionProviders({ children }: { children: ReactNode }) {
   const { finePointer, reducedMotion } = useMediaCapabilities();
   const enableMotionChrome = finePointer && !reducedMotion;
 
   return (
-    <SmoothScroll>
+    <>
       {enableMotionChrome && <CustomCursor />}
       {children}
-    </SmoothScroll>
+    </>
   );
 }

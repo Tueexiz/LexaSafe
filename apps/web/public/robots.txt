@@ -14,7 +14,6 @@
 User-agent: *
 Allow: /
 Allow: /demo
-Allow: /createurs
 
 Disallow: /api/
 Disallow: /vault/

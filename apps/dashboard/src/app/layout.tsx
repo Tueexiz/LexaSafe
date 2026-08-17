@@ -1,5 +1,6 @@
 import "@lexasafe/ui/styles.css";
 import "./globals.css";
+import { clashDisplay, generalSans, syne } from "@/lib/fonts";
 
 export const metadata = {
   title: "LexaSafe | Espace Opérationnel",
@@ -12,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <body className="font-body antialiased">{children}</body>
+    <html lang="fr" className={syne.variable}>
+      <body className={`${clashDisplay.variable} ${generalSans.variable} font-body antialiased`}>{children}</body>
     </html>
   );
 }

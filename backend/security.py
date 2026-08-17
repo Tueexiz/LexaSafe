@@ -9,7 +9,9 @@ import hmac
 import hashlib
 import struct
 import base64
+import secrets
 import ipaddress
+from urllib.parse import quote
 from typing import Optional, Dict, Any
 
 # 1. Hachage Argon2id
@@ -71,6 +73,30 @@ def verify_totp_code(secret_bytes: bytes, input_code: str, window: int = 1) -> b
         if hmac.compare_digest(generate_totp_code(secret_bytes, current_interval + i), input_code.strip()):
             return True
     return False
+
+
+def generate_totp_secret_base32() -> str:
+    """Secret TOTP 160 bits, Base32 RFC 4648 sans padding (Aegis / FreeOTP)."""
+    raw = secrets.token_bytes(20)
+    return base64.b32encode(raw).decode("ascii").rstrip("=")
+
+
+def totp_secret_to_bytes(secret_b32: str) -> bytes:
+    """Décode un secret Base32 (avec ou sans padding) vers les octets HMAC."""
+    cleaned = "".join(secret_b32.strip().split()).upper()
+    pad = (8 - len(cleaned) % 8) % 8
+    return base64.b32decode(cleaned + ("=" * pad))
+
+
+def build_otpauth_uri(email: str, secret_b32: str, issuer: str = "LexaSafe") -> str:
+    """URI otpauth:// RFC 6238 pour enrollment (QR Aegis / FreeOTP)."""
+    label = quote(f"{issuer}:{email}", safe=":@")
+    secret = secret_b32.replace("=", "").upper()
+    issuer_q = quote(issuer, safe="")
+    return (
+        f"otpauth://totp/{label}"
+        f"?secret={secret}&issuer={issuer_q}&algorithm=SHA1&digits=6&period=30"
+    )
 
 # 3. Contrôle IP Whitelist & Sous-réseau VPN WireGuard
 WIREGUARD_ADMIN_SUBNET = ipaddress.ip_network("10.88.0.0/24")

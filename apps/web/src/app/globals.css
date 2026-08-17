@@ -11,21 +11,26 @@
   }
 }
 
-/* Default: fully visible (safe if animation CSS is cached/stale) */
-.hero-title-word {
+.hero-title-word,
+.hero-title-char {
   display: inline-block;
   font-size: inherit;
   line-height: inherit;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .hero-title-word {
+  .hero-title:not(.is-gsap) .hero-title-char {
     animation: hero-title-word-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-title.is-gsap .hero-title-char {
+    animation: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-title-word {
+  .hero-title-word,
+  .hero-title-char {
     animation: none;
     transform: none;
   }
@@ -130,4 +135,12 @@
 
 .prose-legal td {
   @apply border-b border-dashed border-border-subtle py-2 text-text-secondary;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  overflow-x: clip;
 }
